@@ -1,0 +1,25 @@
+@import 'Resources/ngx-datatable/index.css';
+@import 'Resources/ngx-datatable/material.css';
+@import 'Resources/ngx-datatable/assets/icons.css';
+@import 'Resources/indigo-pink.css';
+@import 'Resources/NavigationBar/w3.css';
+@import 'Resources/bootstrap/css/bootstrap.min.css';
+
+.full-width {
+  width: 90%;
+}
+/* For Number field without spinner buttons*/
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0; 
+}
+
+input[type=number] {
+  -moz-appearance:textfield;
+}
+/* */
+
+.title-padding{
+  padding-top: 5px;
+}

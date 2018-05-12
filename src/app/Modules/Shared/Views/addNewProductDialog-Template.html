@@ -1,0 +1,80 @@
+<h3 md-dialog-title>Add new item</h3>
+<div md-dialog-content>
+    <md-grid-list cols="2" rowHeight="5:1">
+        <md-grid-tile>
+          <md-input-container class="full-width">
+          <input mdInput placeholder="Product Name" [formControl]="name">           
+          <md-error *ngIf="name.hasError('required')">
+            Product name is <strong>required</strong>
+          </md-error>
+          </md-input-container>
+        </md-grid-tile>
+        <md-grid-tile>
+          <md-input-container class="full-width">
+          <input mdInput placeholder="Manufacturer" [formControl]="manufacturer">           
+          <md-error *ngIf="manufacturer.hasError('required')">
+              Manufacturer is <strong>required</strong>
+          </md-error>
+          </md-input-container>
+        </md-grid-tile>
+        <md-grid-tile>
+          <!-- <md-input-container class="full-width">
+          <input mdInput placeholder="Type" [formControl]="type">           
+          <md-error *ngIf="type.hasError('required')">
+              Type is <strong>required</strong>
+          </md-error>
+          </md-input-container> -->
+          <div style="float:left;">
+          <md-slide-toggle [(ngModel)]="type">{{type ? "Generic" : "Non-Generic"}}</md-slide-toggle>
+          </div>
+        </md-grid-tile>
+        <md-grid-tile>
+          <md-input-container class="full-width">
+          <input mdInput type="number" placeholder="Tax percent" [formControl]="tax_percent">           
+          <md-error *ngIf="tax_percent.hasError('required')">
+              Tax Percent is <strong>required</strong>
+          </md-error>
+          </md-input-container>
+        </md-grid-tile>
+        <md-grid-tile>
+          <md-input-container class="full-width">
+          <input mdInput placeholder="Batch No" [formControl]="BatchNo">           
+          <md-error *ngIf="BatchNo.hasError('required')">
+              Batch number is <strong>required</strong>
+          </md-error>
+          </md-input-container>
+        </md-grid-tile>
+        <md-grid-tile>
+          <md-input-container class="full-width">
+          <input mdInput placeholder="Expiry Date: mm/yyyy" [formControl]="Exp_date">           
+          <md-error *ngIf="Exp_date.hasError('required')">
+              Expiry Date is <strong>required</strong>
+          </md-error>
+          <md-error *ngIf="Exp_date.hasError('pattern')">
+              Please enter in mm/yy format
+            </md-error>
+          </md-input-container>
+        </md-grid-tile>
+        <md-grid-tile>
+          <md-input-container class="full-width">
+          <input mdInput type="number"  placeholder="MRP" [formControl]="mrp">           
+          <md-error *ngIf="mrp.hasError('required')">
+              MRP is <strong>required</strong>
+          </md-error>
+          </md-input-container>
+        </md-grid-tile>
+        <md-grid-tile>
+          <md-input-container class="full-width">
+          <input mdInput type="number"  placeholder="Product rate" [formControl]="P_rate">           
+          <md-error *ngIf="P_rate.hasError('required')">
+              Product rate is <strong>required</strong>
+          </md-error>
+          </md-input-container>
+        </md-grid-tile>
+    </md-grid-list>
+
+</div>
+<div md-dialog-actions>
+  <button md-button md-dialog-close="OK">OK</button>
+  <button md-button md-dialog-close="CANCEL">CANCEL</button>
+</div>

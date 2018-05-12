@@ -1,0 +1,87 @@
+<md-card>
+    <div class="view-container">
+
+        <md-grid-list cols="5" rowHeight="5:1">
+            <md-grid-tile [colspan]="1">
+                <label>Bill Number:</label>
+            </md-grid-tile>
+            <md-grid-tile [colspan]="1">
+                <md-input-container class="full-width">
+                    <input mdInput disabled [value]="billNo" [title]="billNo">
+                </md-input-container>
+            </md-grid-tile>
+            <md-grid-tile [colspan]="1">
+                <label>Bill Date:</label>
+            </md-grid-tile>
+            <md-grid-tile [colspan]="1">
+                <md-input-container class="full-width">
+                    <input mdInput disabled [value]="billDate" [title]="billDate">
+                </md-input-container>
+            </md-grid-tile>
+            <md-grid-tile [colspan]="1">
+                <button (click)="editRecord()" md-raised-button>
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </button>
+            </md-grid-tile>
+            <md-grid-tile *ngIf="supplier" [colspan]="1">
+                <label>Supplier</label>
+            </md-grid-tile>
+            <md-grid-tile *ngIf="supplier" [colspan]="1">
+                <md-input-container class="full-width">
+                    <input mdInput disabled [value]="supplier" [title]="supplier">
+                </md-input-container>
+            </md-grid-tile>
+            <md-grid-tile *ngIf="customer" [colspan]="1">
+                <label>Customer</label>
+            </md-grid-tile>
+            <md-grid-tile *ngIf="customer" [colspan]="1">
+                <md-input-container class="full-width">
+                    <input mdInput disabled [value]="customer" [title]="customer">
+                </md-input-container>
+            </md-grid-tile>
+            <md-grid-tile [colspan]="1">
+                <label>Bill Amount:</label>
+            </md-grid-tile>
+            <md-grid-tile [colspan]="1">
+                <md-input-container class="full-width">
+                    <input mdInput disabled [value]="billAmt" [title]="billAmt">
+                </md-input-container>
+            </md-grid-tile>
+            <md-grid-tile [colspan]="1">
+                <button (click)="deleteRecord()" md-raised-button color="warn">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+            </md-grid-tile>
+        </md-grid-list>
+    </div>
+</md-card>
+<ngx-datatable style="margin-top:7px;margin-bottom:7px;" class="material" [rows]="rows" [columnMode]="'force'" [headerHeight]="50"
+    [footerHeight]="50" [rowHeight]="50">
+    <ngx-datatable-column prop="Pname" name="Name"></ngx-datatable-column>
+    <ngx-datatable-column prop="manufacturer" name="manufacturer"></ngx-datatable-column>
+    <ngx-datatable-column prop="type" name="Type">
+        <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+            {{value == true ? "Gen" : "Non-gen"}}
+        </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column prop="tax_percent" name="Tax"></ngx-datatable-column>
+    <ngx-datatable-column prop="BatchNo" name="Batch"></ngx-datatable-column>
+    <ngx-datatable-column prop="Exp_date" name="Exp Date"></ngx-datatable-column>
+    <ngx-datatable-column prop="qty" name="Quantity"></ngx-datatable-column>
+    <ngx-datatable-column prop="pack" name="Packing"></ngx-datatable-column>
+    <ngx-datatable-column prop="mrp" name="MRP">
+        <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+            {{ row['mrp'] * row['pack'] | number: '1.1-2'}}
+        </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column prop="P_rate" name="Rate">
+        <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+            {{ row['P_rate'] * row['pack'] | number: '1.1-2'}}
+        </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column prop="P_rate" name="Value">
+        <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+            {{ row['qty'] * (customer ? row['mrp'] : row['P_rate'] * row['pack'] ) | number: '1.1-2'}}
+        </ng-template>
+    </ngx-datatable-column>
+</ngx-datatable>

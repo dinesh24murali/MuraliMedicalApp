@@ -1,0 +1,84 @@
+<md-sidenav-container>
+    <div class="container">
+        <h4 align="center" class="title-padding">{{title}}</h4>
+        <md-grid-list *ngIf="title == 'Purchase'" cols="8" rowHeight="4:2">
+            <md-grid-tile [colspan]="1">
+                <label>Filter by supplier</label>
+            </md-grid-tile>
+            <md-grid-tile [colspan]="1">
+                <md-checkbox [(ngModel)]="isFilterBySupplier"></md-checkbox>
+            </md-grid-tile>
+            <md-grid-tile [colspan]="1">
+                <md-select [disabled]="!isFilterBySupplier" [(ngModel)]="selSupplier">
+                    <md-option *ngFor="let item of suppliersList" [value]="item.id">
+                        {{ item.name }}
+                    </md-option>
+                </md-select>
+            </md-grid-tile>
+        </md-grid-list>
+        <!-- Date Filter -->
+        <date-filter #financeDateFilter (fetchRecordEvent)="fetchRecords($event)" cols="8" rowHeight="4:2" colspan="1"></date-filter>
+        <hr *ngIf="!tableLoadingIndicator"/>
+        <md-progress-bar *ngIf="tableLoadingIndicator" class="buffer-indicator" mode="indeterminate"></md-progress-bar>
+        <ngx-datatable style="height: 350px;" class="material" [rows]="filteredRecords" [columnMode]="'force'" [sortType]="'single'"
+            [headerHeight]="40" [scrollbarV]="true" [footerHeight]="40" [rowHeight]="30" [limit]="10" [selected]="checkedRecords"
+            [selectionType]="'checkbox'" (select)="calcTotal()" (page)="onPageChange($event)">
+
+            <ngx-datatable-column [width]="40" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+                <!-- <ng-template style="width: 35px;" ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+                    <md-checkbox [checked]="allRowsSelected" (change)="selectFn(allRowsSelected);" [(ngModel)]="selectAllToggle"></md-checkbox>
+                </ng-template> -->
+                <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+                    <md-checkbox title="select to exclude from total" [checked]="isSelected" (change)="onCheckboxChangeFn($event);"></md-checkbox>
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column prop="BillNo" name="Bill Number"></ngx-datatable-column>
+            <ngx-datatable-column prop="BillDate" name="Bill Date" [width]="30">
+                <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+                    {{value | date:'mediumDate'}}
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column prop="Items" name="Items"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="title == 'Sales'" prop="Customer" name="Customer"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="title == 'Purchase'" prop="Supplier" name="Supplier"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="title == 'Purchase'" prop="Purchase_amt" name="Purchase Amt" [width]="30"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="title == 'Sales'" prop="Sales_amt" name="Sales Amt" [width]="30"></ngx-datatable-column>
+            <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+                <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+                    <a routerLink="." mdTooltip="Peek record" (click)="viewRecord(row)">
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-footer>
+                <ng-template ngx-datatable-footer-template let-selectedCount="selectedCount">
+                    <div style="width:100%">
+                        <div class="col-md-3">
+                            <h6>Selected: {{selectedCount}}/{{totalNoOfRecords}}</h6>
+                        </div>
+                        <div class="col-lg-offset-5 col-md-1">
+                            <h6>Total: </h6>
+                        </div>
+                        <div class="col-md-3">
+                            <input disabled [value]="totalAmount - totalCheckedRecords" class="form-control">
+                        </div>
+
+                    </div>
+                </ng-template>
+            </ngx-datatable-footer>
+        </ngx-datatable>
+        <!-- End of Records -->
+    </div>
+    <md-sidenav align="end" mode="push" #sidenav class="viewRecord">
+        <div style="padding-bottom:5px;">
+            <button style="float:right" md-icon-button color="warn" (click)="sidenav.close()">
+                <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            <h3>View Record</h3>
+        </div>
+        <peek-record [billId]="view_Id" [billNo]="view_BillNo" [billDate]="view_BillDate" [supplier]="view_Supplier" [customer]="view_Customer"
+            [billAmt]="view_BillAmt" (deleteRecordEvent)="deleteRecord($event)" (editRecordEvent)="editRecordFromView($event)"
+            [rows]="peek_recordItems"></peek-record>
+    </md-sidenav>
+</md-sidenav-container>

@@ -1,0 +1,285 @@
+<div class="main-container">
+    <div class="container">
+        <h4 align="center" class="title-padding">{{title}}</h4>
+        <md-grid-list cols="7" rowHeight="4:2">
+            <md-grid-tile [colspan]="3">
+                <md-input-container class="full-width">
+                    <input mdInput placeholder="Bill Number" [formControl]="billNo">
+                    <md-error *ngIf="billNo.hasError('required')">
+                        Bill number is
+                        <strong>required</strong>
+                    </md-error>
+                    <md-error *ngIf="billNo.hasError('maxlength')">
+                        Bill number is
+                        <strong>too long</strong>
+                    </md-error>
+                </md-input-container>
+            </md-grid-tile>
+
+            <md-grid-tile [colspan]="1">
+                <md-input-container>
+                    <input mdInput [mdDatepicker]="picker" placeholder="Bill Date" [formControl]="billDate">
+                    <md-error *ngIf="billDate.hasError('required')">
+                        Bill date is
+                        <strong>required</strong>
+                    </md-error>
+                    <button mdSuffix [mdDatepickerToggle]="picker"></button>
+                </md-input-container>
+                <md-datepicker #picker></md-datepicker>
+            </md-grid-tile>
+
+            <md-grid-tile *ngIf="title == 'Purchase'" [colspan]="3">
+                <md-input-container class="full-width">
+                    <input mdInput placeholder="Supplier name" [mdAutocomplete]="auto" [formControl]="supplier">
+                    <md-error *ngIf="supplier.hasError('maxlength')">
+                        Supplier name is
+                        <strong>too long</strong>
+                    </md-error>
+                    <md-error *ngIf="supplier.hasError('required')">
+                        Supplier name is
+                        <strong>required</strong>
+                    </md-error>
+                </md-input-container>
+
+                <md-autocomplete #auto="mdAutocomplete">
+                    <md-option *ngFor="let item of filteredSuppliers" [value]="item.name">
+                        {{ item.name }}
+                    </md-option>
+                </md-autocomplete>
+
+            </md-grid-tile>
+
+            <md-grid-tile *ngIf="title == 'Sales'" [colspan]="3">
+                <md-input-container class="full-width">
+                    <input mdInput placeholder="Customer Name" [formControl]="CustomerName">
+                    <md-error *ngIf="CustomerName.hasError('required')">
+                        Customer Name is
+                        <strong>required</strong>
+                    </md-error>
+                    <md-error *ngIf="CustomerName.hasError('maxlength')">
+                        Customer Name is
+                        <strong>too long</strong>
+                    </md-error>
+                </md-input-container>
+            </md-grid-tile>
+
+            <md-grid-tile [colspan]="3">
+                <md-input-container class="full-width">
+                    <input mdInput placeholder="Item name" [mdAutocomplete]="auto" [formControl]="products">
+                </md-input-container>
+
+                <md-autocomplete #auto="mdAutocomplete">
+                    <md-option *ngFor="let product of filteredProducts" [value]="product.Pname">
+                        <span>{{ product.Pname }}</span>
+                    </md-option>
+                </md-autocomplete>
+            </md-grid-tile>
+
+            <md-grid-tile>
+                <button (click)="addProduct()" md-raised-button title="Adds an item to purchase list">Add to list</button>
+            </md-grid-tile>
+            <md-grid-tile *ngIf="title == 'Purchase'">
+                <button (click)="addNewProduct()" md-raised-button title="Creates a new item">Add New</button>
+            </md-grid-tile>
+            <md-grid-tile>
+                <button (click)="removeProduct()" md-raised-button color="warn">Remove</button>
+            </md-grid-tile>
+            <md-grid-tile>
+                <button (click)="addRecord()" md-raised-button color="primary">{{ this.id ? "Update" : "Submit"}}</button>
+            </md-grid-tile>
+        </md-grid-list>
+    </div>
+    <div style="width:90%;margin-left:5%;">
+        <div *ngIf="title == 'Purchase'">
+            <ngx-datatable style="height: 380px;" #recordTable [limit]="6" [scrollbarV]="true" class="material" [rows]="selectedItems"
+                [columnMode]="'force'" [headerHeight]="40" [footerHeight]="40" [rowHeight]="45" [selected]="checkedItems" [selectionType]="'checkbox'"
+                (select)='onSelect($event)'>
+
+                <ngx-datatable-column [width]="40" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+                    <ng-template style="width: 35px;" ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+                        <md-checkbox [checked]="allRowsSelected" (change)="selectFn(allRowsSelected)" [(ngModel)]="selectAllToggle"></md-checkbox>
+                    </ng-template>
+                    <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+                        <md-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></md-checkbox>
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column prop="Pname" name="Name"></ngx-datatable-column>
+                <ngx-datatable-column prop="manufacturer" name="Manufacturer"></ngx-datatable-column>
+                <ngx-datatable-column prop="type" name="Type" [width]="100">
+                    <ng-template style="width: 135px;" let-row="row" ngx-datatable-cell-template let-value="value">
+                        {{value?"Gene":"Non-gene"}}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column prop="tax_percent" name="Tax Per" [width]="110">
+                    <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
+                        <input type="number" [(ngModel)]="row['tax_percent']" class="form-control">
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column prop="BatchNo" name="Batch Number" [width]="200">
+                    <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
+                        <button color="accent" style="float:right;" md-icon-button mdTooltip="{{row['newBatchFlag'] ? 'Cancel' : 'Add New Batch'}}"
+                            (click)="toggleAddNewBatch(row)">
+                            <!-- <i class="material-icons">{{row['newBatchFlag'] == false ? "add" : "close"}}</i>
+                            glyphicon glyphicon-remove -->
+                            <span class="{{row['newBatchFlag'] == false ? 'glyphicon glyphicon-plus' : 'glyphicon glyphicon-remove'}}"></span>
+                        </button>
+                        <input style="width:100px;" *ngIf="row['newBatchFlag']" type="text" [(ngModel)]="row['BatchNo']" (keyup)="filterBatch($event,row)"
+                            class="form-control">
+                        <md-select (ngModelChange)="fillDetailsPurchase($event,row)" *ngIf="row['newBatchFlag'] == false" [(ngModel)]="row['BatchNo']">
+                            <md-option *ngFor="let item of row['Batches']" [value]="item.BatchNumber">
+                                {{ item.BatchNumber }}
+                            </md-option>
+                        </md-select>
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column prop="Exp_date" name="Exp Date" [width]="130">
+                    <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
+                        <input type="text" placeholder="mm/yyyy" [(ngModel)]="row['Exp_date']" (ngModelChange)="validateExpiryDate(row)" class="form-control">
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column prop="pack" name="Packing" [width]="95">
+                    <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
+                        <input type="number" [(ngModel)]="row['pack']" class="form-control">
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column prop="qty" name="Quantity" [width]="95">
+                    <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
+                        <input type="number" (keyup)="calculateTotal(row)" [(ngModel)]="row['qty']" class="form-control">
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column prop="stock" name="Stock" [width]="120">
+                    <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
+                        {{value?value:""}}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column prop="mrp" name="MRP" [width]="120">
+                    <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
+                        <input type="number" (ngModelChange)="calculateTotal(row)" [(ngModel)]="row['mrp']" class="form-control">
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column prop="P_rate" name="P rate" [width]="110">
+                    <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
+                        <input type="number" (ngModelChange)="calculateTotal(row)" [(ngModel)]="row['P_rate']" class="form-control">
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column prop="P_rate" name="Value" [width]="120">
+                    <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
+                        {{row['BatchNo'] ? row['P_rate'] * row['qty'] : 0}}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-footer>
+                    <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-selectedCount="selectedCount">
+                        <div style="width:100%">
+                            <div class="col-md-3">
+                                <h6>Selected: {{selectedCount}}/{{rowCount}}</h6>
+                            </div>
+                            <div class="col-lg-offset-5 col-md-1">
+                                <h6>Total: </h6>
+                            </div>
+                            <div class="col-md-3">
+                                <input disabled [(ngModel)]="billAmount" class="form-control">
+                            </div>
+
+                        </div>
+                    </ng-template>
+                </ngx-datatable-footer>
+            </ngx-datatable>
+        </div>
+        <div *ngIf="title == 'Sales'">
+            <ngx-datatable style="height: 380px;" #recordTable [limit]="6" [scrollbarV]="true" class="material" [rows]="selectedItems"
+                [columnMode]="'force'" [headerHeight]="40" [footerHeight]="40" [rowHeight]="45" [selected]="checkedItems" [selectionType]="'checkbox'"
+                (select)='onSelect($event)'>
+
+                <ngx-datatable-row-detail [rowHeight]="getHeight">
+                    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+                        <table class="table table-condensed" align="center" style="width: 80%;">
+                            <tr>
+                                <th>Batch No</th>
+                                <th>Exp Date</th>
+                                <th>Stock</th>
+                                <th>Qty</th>
+                                <th>Pack</th>
+                                <th>MRP</th>
+                                <th>P rate</th>
+                                <th>Value</th>
+                            </tr>
+                            <tr *ngFor="let item of row['Batches']">
+                                <td *ngIf="item.show">{{item.BatchNumber}}</td>
+                                <td *ngIf="item.show">{{item.Exp_date}}</td>
+                                <td *ngIf="item.show">{{item.stock}}</td>
+                                <td *ngIf="item.show">{{item.batchQty}}</td>
+                                <td *ngIf="item.show">{{item.pack}}</td>
+                                <td *ngIf="item.show">{{item.mrp}}</td>
+                                <td *ngIf="item.show">{{item.P_rate}}</td>
+                                <td *ngIf="item.show">{{item.batchValue | number: '1.1-2'}}</td>
+                            </tr>
+                        </table>
+                    </ng-template>
+                </ngx-datatable-row-detail>
+
+                <ngx-datatable-column [width]="20" [resizeable]="false" [sortable]="false" [draggable]="false" [canAutoResize]="false">
+                    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                        <a style="cursor:pointer;" [class.datatable-icon-right]="!expanded" [class.datatable-icon-down]="expanded" title="Expand/Collapse Row"
+                            (click)="toggleExpandRow(row,false)">
+                        </a>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column [width]="40" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+                    <ng-template style="width: 35px;" ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+                        <md-checkbox [checked]="allRowsSelected" (change)="selectFn(allRowsSelected)" [(ngModel)]="selectAllToggle"></md-checkbox>
+                    </ng-template>
+                    <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+                        <md-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></md-checkbox>
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column prop="Pname" name="Name"></ngx-datatable-column>
+                <ngx-datatable-column prop="manufacturer" name="Manufacturer"></ngx-datatable-column>
+                <ngx-datatable-column prop="type" name="Type">
+                    <ng-template style="width: 135px;" let-row="row" ngx-datatable-cell-template let-value="value">
+                        {{value?"Generic":"Non-generic"}}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column prop="tax_percent" name="Tax Percent"></ngx-datatable-column>
+                <ngx-datatable-column prop="BatchNo" name="Batch Number" [width]="250">
+
+                    <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
+
+                        <md-select multiple [(ngModel)]="row['BatchNo']" (click)="toggleExpandRow(row,true)" (change)="fillDetailsSales($event,row)">
+                            <md-option *ngFor="let item of row['Batches']" mdTooltip="Expiry Date: {{item.Exp_date}}" [value]="item.BatchNumber">
+                                {{ item.BatchNumber }}
+                            </md-option>
+                        </md-select>
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column prop="qty" name="Quantity">
+                    <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
+                        <input type="number" (keyup)="calculateTotal(row)" [(ngModel)]="row['qty']" class="form-control">
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column prop="stock" name="Stock">
+                    <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
+                        {{value?value:""}}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column prop="value" name="Value"></ngx-datatable-column>
+                <ngx-datatable-footer>
+                    <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-selectedCount="selectedCount">
+                        <div style="width:100%">
+                            <div class="col-md-3">
+                                <h6>Selected: {{selectedCount}}/{{rowCount}}</h6>
+                            </div>
+                            <div class="col-lg-offset-5 col-md-1">
+                                <h6>Total: </h6>
+                            </div>
+                            <div class="col-md-3">
+                                <input disabled [(ngModel)]="billAmount" class="form-control">
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngx-datatable-footer>
+            </ngx-datatable>
+        </div>
+    </div>
+</div>

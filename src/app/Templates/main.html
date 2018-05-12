@@ -1,0 +1,68 @@
+<div (mouseleave)="nav_out()">
+  <div #sideNavBar class="w3-sidebar w3-bar-block w3-light-grey w3-card-2 w3-animate-left top-correction" style="display:none"
+    id="SideNavbar">
+    <button style="top: 100px;" class="w3-button w3-block w3-left-align" (click)="openAccordion('Purchase')">
+      Purchase
+      <b class="caret"></b>
+    </button>
+    <div id="AccordionPurchase" class="w3-hide w3-white w3-card-2">
+      <a routerLink="/record/Purchase" class="w3-bar-item w3-button">Add Purchase</a>
+      <a routerLink="/viewRecord/Purchase" class="w3-bar-item w3-button">View Purchase</a>
+    </div>
+
+    <button style="top: 100px;" class="w3-button w3-block w3-left-align" (click)="openAccordion('Sales')">
+      Sales
+      <b class="caret"></b>
+    </button>
+    <div id="AccordionSales" class="w3-hide w3-white w3-card-2">
+      <a routerLink="/record/Sales" class="w3-bar-item w3-button">Add Sales</a>
+      <a routerLink="/viewRecord/Sales" class="w3-bar-item w3-button">View Sales</a>
+    </div>
+
+    <!-- <button style="top: 100px;" class="w3-button w3-block w3-left-align" (click)="openAccordion('Supplier')">
+      Supplier
+      <b class="caret"></b>
+    </button>
+    <div id="AccordionSupplier" class="w3-hide w3-white w3-card-2">
+      <a routerLink="/supplier" class="w3-bar-item w3-button">Payment</a>
+    </div> -->
+    <button style="top: 100px;" class="w3-button w3-block w3-left-align" (click)="openAccordion('Finance')">
+      Finance
+      <b class="caret"></b>
+    </button>
+    <div id="AccordionFinance" class="w3-hide w3-white w3-card-2">
+      <a routerLink="/finance/Sales" class="w3-bar-item w3-button">Sales Status</a>
+      <a routerLink="/finance/Purchase" class="w3-bar-item w3-button">Purchase Status</a>
+    </div>
+
+    <!-- <a routerLink="/record/Purchase" class="w3-bar-item w3-button">Add Purchase Record</a>
+    <a routerLink="/record/Sales" class="w3-bar-item w3-button">Add Sales Record</a>
+    <a routerLink="/sample" class="w3-bar-item w3-button">Sample Table</a> -->
+  </div>
+</div>
+
+<div class="w3-main" id="main">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+      <div>
+        <ul class="nav navbar-nav">
+          <li>
+            <a style="cursor:pointer;">
+              <span (click)="nav_toggle()" class="glyphicon glyphicon-menu-hamburger"></span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/dashboard" class="w3-bar-item w3-button">Dashboard</a>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </nav>
+  <!--<md-toolbar color="primary">
+<button md-button (click)="w3_toggle()"><span class="glyphicon glyphicon-menu-hamburger"></span></button>
+</md-toolbar>-->
+  <br>
+  <br>
+  <router-outlet></router-outlet>
+</div>
