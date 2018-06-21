@@ -195,35 +195,10 @@ class PurchaseController{
 		$query = "update purchase set billNo = '$RecordDetail->BillNo',bill_Date = '".$RecordDetail->BillDate."',supplierId = '".$RecordDetail->Supplier->id."' where id='$RecordDetail->Id';";
 		$this->dbHandler->ExecuteQuery($query);
 		
-		$AddItems = $data['AddItems'];
-		$UpdateItems = $data['UpdateItems'];
-		$RemoveItems = $data['RemoveItems'];
-		if(count($AddItems) > 0)
-			$this->_AddPurchaseData($RecordDetail->Id,$AddItems);
-		$queryUpdatePurchase_Data = "";
-		$queryUpdateProduct_Stock = "";
-		$queryUpdateProduct_tax = "";
-		if(count($UpdateItems) > 0){
-			foreach($UpdateItems as $key => $i){
-				$queryUpdatePurchase_Data .= "Update purchase_data set qty = ".($i->qty * $i->pack)." where bill_id = '".$RecordDetail->Id."' and Pid = '".$i->Pid."' and batchNo = '".$i->BatchNo."';";
-				$queryUpdateProduct_Stock .= "Update prod_stock set stock = $i->stock,Exp_date='".strftime("%Y-%d-%m", strtotime("01/".$i->Exp_date))."', pack = $i->pack, mrp = '".round($i->mrp/$i->pack,2)."', P_rate = '".round($i->P_rate/$i->pack,2)."' where Pid = '".$i->Pid."' and BatchNo = '".$i->BatchNo."';";
-				// update tax percent
-				$queryUpdateProduct_tax .= "update prod_stock set tax_percent = '$i->tax_percent' where Pid = '$i->Pid';";
-			}
-		// echo "<br> Update Queries: ".($queryUpdatePurchase_Data.$queryUpdateProduct_Stock.$queryUpdateProduct_tax);
-		$this->dbHandler->ExecuteMultipleQuery($queryUpdatePurchase_Data.$queryUpdateProduct_Stock.$queryUpdateProduct_tax);
-		}
-		
-		$queryDeletePurchase_Data = "";
-		$queryUpdateProduct_Stock = "";
-		if(count($RemoveItems) > 0){
-			foreach($RemoveItems as $key => $i){
-				$queryUpdateProduct_Stock .= "Update prod_stock set stock = stock - ".($i->qty * $i->pack)." where Pid = '".$i->Pid."' and BatchNo = '".$i->BatchNo."';";
-				$queryDeletePurchase_Data .= "Delete from purchase_data where bill_id = '".$RecordDetail->Id."' and Pid = '".$i->Pid."' and batchNo = '".$i->BatchNo."';";
-			}
-		// echo "<br> Remove Queries: ".($queryDeletePurchase_Data.$queryUpdateProduct_Stock);
-		$this->dbHandler->ExecuteMultipleQuery($queryDeletePurchase_Data.$queryUpdateProduct_Stock);
-		}
+		// removes the previous records
+		$this->_UpdateProductStockAfterDelete($RecordDetail->Id);
+		// add the new records
+		$this->_AddPurchaseData($RecordDetail->Id,$data['Items']);
 	}
 	
 	private function DeletePurchaseRecord($data){
@@ -258,24 +233,26 @@ class PurchaseController{
 				// $this->dbHandler->ExecuteMultipleQuery($queryDeletePurchase_Data);
 				// echo "<br><br> Delete = 0: <br> ".$queryDeletePurchase_Data;
 			// }
-			
-			// Update Product stock after removing record
-			$query = "select s.Pid as Pid,p.BatchNo as batchNo,p.qty as qty from prod_stock as s, purchase_data as p where p.bill_id = '".$data['RecordId']."' and p.pid = s.pid and p.batchNo = s.batchNo;";
-			$resultSet = $this->dbHandler->ExecuteQuery($query);
-			$no_records = mysqli_num_rows($resultSet);
-			$queryUpdateProduct_Stock = "";
-			$queryDeletePurchase_Data = "";
-			
-			if($no_records > 0){
-				while ($row = mysqli_fetch_assoc($resultSet)) {
-					$queryUpdateProduct_Stock .= "Update prod_stock set stock = stock - ".($row['qty'] * $row['pack'])." where Pid = '".$row['Pid']."' and BatchNo = '".$row['batchNo']."';";
-					$queryDeletePurchase_Data .= "Delete from purchase_data where Pid = '".$row['Pid']."' and BatchNo = '".$row['batchNo']."' and bill_id = '".$data['RecordId']."';";
-				}
-				$this->dbHandler->ExecuteMultipleQuery($queryUpdateProduct_Stock.$queryDeletePurchase_Data);
-				// echo "<br><br> Update Stock: <br> ".$queryUpdateProduct_Stock.$queryDeletePurchase_Data;
-			}			
+			$this->_UpdateProductStockAfterDelete($data['RecordId']);		
 		}
 		echo "}";
+	}
+	
+	private function _UpdateProductStockAfterDelete($recordId) {
+		$query = "select s.Pid as Pid,p.BatchNo as batchNo,s.pack as pack,p.qty as qty from prod_stock as s, purchase_data as p where p.bill_id = '$recordId' and p.pid = s.pid and p.batchNo = s.batchNo;";
+		$resultSet = $this->dbHandler->ExecuteQuery($query);
+		$no_records = mysqli_num_rows($resultSet);
+		$queryUpdateProduct_Stock = "";
+		$queryDeletePurchase_Data = "";
+		
+		if($no_records > 0){
+			while ($row = mysqli_fetch_assoc($resultSet)) {
+				$queryUpdateProduct_Stock .= "Update prod_stock set stock = stock - ".($row['qty'] * $row['pack'])." where Pid = '".$row['Pid']."' and BatchNo = '".$row['batchNo']."';";
+				$queryDeletePurchase_Data .= "Delete from purchase_data where Pid = '".$row['Pid']."' and BatchNo = '".$row['batchNo']."' and bill_id = '".$recordId."';";
+			}
+			$this->dbHandler->ExecuteMultipleQuery($queryUpdateProduct_Stock.$queryDeletePurchase_Data);
+			// echo "<br><br> Update Stock: <br> ".$queryUpdateProduct_Stock.$queryDeletePurchase_Data;
+		}
 	}
 	
 	private function _AddPurchaseData($recordId,$data){
@@ -294,7 +271,7 @@ class PurchaseController{
 				$queryProduct_Stock .= "('$Pid','$value->Pname','$value->manufacturer',".($value->type == "1" ? "true" : "false").",'$value->tax_percent',$value->pack,'$value->BatchNo',".($value->qty * $value->pack).",'".strftime("%Y-%d-%m", strtotime("01/".$value->Exp_date))."','".round($value->mrp/$value->pack,2)."','".round($value->P_rate/$value->pack,2)."'),";
 				$InsertNewProd_StockFlag = true;
 				// Date format that "strtotime" takes in is M/D/Y. But we are supplying D/M/Y. In this case since we are sure that the date will always be 01. we invert format string to "%Y-%d-%m"
-				$queryPurchase_Data .= "('$recordId',$value->qty * $value->pack,'$value->BatchNo','$Pid'),";
+				$queryPurchase_Data .= "('$recordId',$value->qty,'$value->BatchNo','$Pid'),";
 
 			}else{		// executed if it is an existing product
 				$batches = $value->Batches;
@@ -322,17 +299,23 @@ class PurchaseController{
 			}
 		}
 		$queryPurchase_Data = substr($queryPurchase_Data, 0, -1).";";
+		// echo "<br><br> ".$queryPurchase_Data;
 		$this->dbHandler->ExecuteInsert($queryPurchase_Data);
 		if($InsertNewProd_StockFlag || $InsertNewBatchFlag){
 			$queryProduct_Stock = substr($queryProduct_Stock, 0, -1).";";
 			$this->dbHandler->ExecuteInsert($queryProduct_Stock);
+			// echo "<br><br> ".$queryProduct_Stock;
 		}
-		if($UpdateStockFlag)
+		if($UpdateStockFlag){
 			$this->dbHandler->ExecuteMultipleQuery($queryUpdates);
+			// echo "<br><br> ".$queryUpdates;
+		}
 		// Run the query to update tax percent and batch number_format
 		// this will not be executer if all the products in a purchase order are new products
-		if($InsertNewBatchFlag || $UpdateStockFlag)
+		if($InsertNewBatchFlag || $UpdateStockFlag){
 			$this->dbHandler->ExecuteMultipleQuery($queryUpdateProduct_tax);
+			// echo "<br><br> ".$queryUpdateProduct_tax;
+		}
 	}
 	
 	private function GetCountForFilterRecords($data,$returnQuery){
@@ -382,10 +365,4 @@ class PurchaseController{
 		echo ' "count":'.$noOfRecords.'}';
 	}
 }
-//{"Pid":"101","Pname":"John","manufacturer":"John","type":"1","tax_percent":"9.99","BatchNo":"201","qty":2,"Exp_date":"09/1993","mrp":9.99,"P_rate":9.99,
-//	1. check new Batch No -> Update it in prod_stock -> make entry in purchase_data
-//	2. if it is new -> make a new entry in prod_stock -> make entry in purchase_data
-//update prod_stock set stock = stock + 12,Pname = 'John',manufacturer='John',type = false,tax_percent = 12.5,Exp_date='2018-06-01',mrp = 101.0, P_rate = 75.0 where Pid = 'P59c4dd9779ed55.57464969' and batchNo = 'Tr568';
-//
-//
 ?>

@@ -365,7 +365,7 @@ export class RecordComponent implements OnInit, OnDestroy {
         } else if ((exception.exception && exception.exception == "noChange") || (!exception.exception)) {
           if (this.billNo_u != this.billNo.value || this.billDate_u != bDate || this.supplier_u != this.supplier.value || !exception.exception) {
             let tempSupplier = this.filteredSuppliers.find((item: any) => item.name == this.supplier.value);
-            this.purchaseService.UpdatePurchaseRecord({ Id: this.id, BillNo: this.billNo.value, BillDate: bDate, Supplier: tempSupplier ? tempSupplier : { id: "", name: this.supplier.value }, Items: "", Purchase_amt: this.billAmount }, this.AddItems_u, this.UpdateItems_u, this.RemoveItems_u)
+            this.purchaseService.UpdatePurchaseRecord({ Id: this.id, BillNo: this.billNo.value, BillDate: bDate, Supplier: tempSupplier ? tempSupplier : { id: "", name: this.supplier.value }, Items: "", Purchase_amt: this.billAmount }, this.selectedItems)
               .then(res => {
                 this._openSnackBar(res.error ? "Purchase not updated" : "Purchase updated", "ok");
                 this._router.navigate(['/viewRecord/Purchase'], { queryParams: { id: this.id } });
@@ -389,7 +389,7 @@ export class RecordComponent implements OnInit, OnDestroy {
         if (!flag) {
           let billDate = new Date(this.billDate.value);
           this.salesHelper.PrepareItemsForUpdate(this);
-          this.salesService.UpdateSalesRecord({ Id: this.id, BillNo: this.billNo.value, BillDate: billDate.getFullYear() + "-" + (billDate.getMonth() + 1) + "-" + billDate.getDate(), Customer: this.CustomerName.value, Items: "" }, this.AddItems_u, this.UpdateItems_u, this.RemoveItems_u)
+          this.salesService.UpdateSalesRecord({ Id: this.id, BillNo: this.billNo.value, BillDate: billDate.getFullYear() + "-" + (billDate.getMonth() + 1) + "-" + billDate.getDate(), Customer: this.CustomerName.value, Items: "" }, this.selectedItems)
             .then(res => {
               this._openSnackBar(res.error ? "Sales not updated" : "Sales updated", "ok");
               this._router.navigate(['/viewRecord/Sales'], { queryParams: { id: this.id } });
@@ -428,22 +428,15 @@ export class RecordComponent implements OnInit, OnDestroy {
 
       scope.OldSelectedItems.forEach(function (oldItem: any) {
         // checks only of the qty is different for the same Product with same batch number
-        if (item.Pid == oldItem.Pid && item.BatchNo == oldItem.BatchNo && item.qty != oldItem.qty) {
+        if (item.Pid == oldItem.Pid && item.BatchNo == oldItem.BatchNo && (item.qty != oldItem.qty || item.pack != oldItem.pack)) {
           oldItem.noChange = item.noChange = "change";
 
-          if (item.qty < oldItem.qty && (oldItem.stock - ((oldItem.qty - item.qty)* item.pack)) < 0) {
+          if (item.qty < oldItem.qty && (oldItem.stock - ((oldItem.qty - item.qty) * item.pack)) < 0) {
             let msg = "Cannot reduct quantity of " + item.Pname + ": Batch: " + item.BatchNo + ". Stock too low ";
             StockException = { message: msg };
             return false;
-          } else {
-            // update the stock of the product
-            item.stock = item.qty < oldItem.qty ? (oldItem.stock - ((oldItem.qty - item.qty) * item.pack)) : (oldItem.stock + ((item.qty - oldItem.qty) * item.pack));
-            scope.UpdateItems_u.push(item);
           }
           // check if Exp_date or mrp or P_rate or tax percent have been changed but not the qty for the same Product with same batch number
-        } else if (item.Pid == oldItem.Pid && item.BatchNo == oldItem.BatchNo && item.qty == oldItem.qty && (item.Exp_date != oldItem.Exp_date || item.mrp != oldItem.mrp || item.P_rate != oldItem.P_rate || item.tax_percent != oldItem.tax_percent)) {
-          scope.UpdateItems_u.push(item);
-          oldItem.noChange = item.noChange = "noChange";
         } else if (item.Pid == oldItem.Pid && item.BatchNo == oldItem.BatchNo && item.qty == oldItem.qty && item.Exp_date == oldItem.Exp_date && item.mrp == oldItem.mrp && item.P_rate == oldItem.P_rate && item.tax_percent == oldItem.tax_percent)
           oldItem.noChange = item.noChange = "noChange";
 
@@ -477,7 +470,7 @@ export class RecordComponent implements OnInit, OnDestroy {
     if (this.title == "Purchase") {
       this.selectedItems.forEach(function (item) {
         if (item.BatchNo)
-          total += item.qty * item.P_rate * item.pack;
+          total += item.qty * item.P_rate;
       });
       this.billAmount = parseFloat(total.toFixed(2));
     } else {

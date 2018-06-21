@@ -67,9 +67,9 @@ export class SalesService {
             .catch(this.handleError);
     }
 
-    UpdateSalesRecord(sales: Sales, AddItems: Item[], UpdateItems: any[], RemoveItems: Item[]): Promise<any> {
+    UpdateSalesRecord(sales: Sales, items: Item[]): Promise<any> {
 
-        return this.http.post(this.host + "/medical/main.php/Sales/UpdateSalesRecord", 'data={"RecordDetail":' + encodeURIComponent(JSON.stringify(sales)) + ',"AddItems":' + encodeURIComponent(JSON.stringify(AddItems)) + ',"UpdateItems":' + JSON.stringify(UpdateItems) + ',"RemoveItems":' + JSON.stringify(RemoveItems) + '}', this.options).toPromise()
+        return this.http.post(this.host + "/medical/main.php/Sales/UpdateSalesRecord", 'data={"RecordDetail":' + encodeURIComponent(JSON.stringify(sales)) + ',"Items":' + encodeURIComponent(JSON.stringify(items))+ '}', this.options).toPromise()
             .then(response => {
                 return response;
             }).catch(function (response) {

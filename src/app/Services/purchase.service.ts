@@ -27,9 +27,9 @@ export class PurchaseService {
             });
     }
 
-    UpdatePurchaseRecord(purchase: Purchase, AddItems: Item[], UpdateItems: any[], RemoveItems: Item[]): Promise<any> {
+    UpdatePurchaseRecord(purchase: Purchase, items: Item[]): Promise<any> {
 
-        return this.http.post(this.host + "/medical/main.php/Purchase/UpdatePurchaseRecord", 'data={"RecordDetail":' + encodeURIComponent(JSON.stringify(purchase)) + ',"AddItems":' + encodeURIComponent(JSON.stringify(AddItems)) + ',"UpdateItems":' + encodeURIComponent(JSON.stringify(UpdateItems)) + ',"RemoveItems":' + JSON.stringify(RemoveItems) + '}', this.options).toPromise()
+        return this.http.post(this.host + "/medical/main.php/Purchase/UpdatePurchaseRecord", 'data={"RecordDetail":' + encodeURIComponent(JSON.stringify(purchase)) + ',"Items":' + encodeURIComponent(JSON.stringify(items)) +'}', this.options).toPromise()
             .then(response => {
                 return response;
             }).catch(function (error) {

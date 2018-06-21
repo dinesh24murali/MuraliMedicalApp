@@ -73,10 +73,13 @@ class SalesController{
 
 		if($flag){
 			$querySales_Data = substr($querySales_Data, 0, -1).";";
-			$this->dbHandler->ExecuteInsert($querySales_Data);
+			// $this->dbHandler->ExecuteInsert($querySales_Data);
+			echo "<br><br>Add sales data: <br>".$queryUpdates;
 			
-			if($queryUpdates != "")
-			$this->dbHandler->ExecuteMultipleQuery($queryUpdates);
+			if($queryUpdates != ""){
+				// $this->dbHandler->ExecuteMultipleQuery($queryUpdates);
+				echo "<br><br>Update Query: <br>".$queryUpdates;
+			}
 		}
 	}
 	
@@ -294,43 +297,48 @@ class SalesController{
 		$RecordDetail = $data['RecordDetail'];
 		$query = "update sales set billNo = '$RecordDetail->BillNo',bill_Date = '".$RecordDetail->BillDate."',customerId = '$RecordDetail->Customer' where id='$RecordDetail->Id';";
 		$this->dbHandler->ExecuteQuery($query);
+		
+		// Delete sales_data and updating the stock
+		$this->_DeleteSalesRecordData($RecordDetail->Id);
+		// Add the new sales_data
+		$this->_AddSalesData($RecordDetail->Id, $data['Items']);
 		//echo " <br> Record: ".$query;
 		
-		$AddItems = $data['AddItems'];
-		$UpdateItems = $data['UpdateItems'];
-		$RemoveItems = $data['RemoveItems'];
-		$queryUpdateSales_Data = "";
-		$queryUpdateProduct_Stock = "";
-		$queryDeleteSales_Data = "";
-		$queryInsertSales_Data = "Insert into sales_data (`bill_id`,`qty`,`batchNo`,`pid`) values";
+		// $AddItems = $data['AddItems'];
+		// $UpdateItems = $data['UpdateItems'];
+		// $RemoveItems = $data['RemoveItems'];
+		// $queryUpdateSales_Data = "";
+		// $queryUpdateProduct_Stock = "";
+		// $queryDeleteSales_Data = "";
+		// $queryInsertSales_Data = "Insert into sales_data (`bill_id`,`qty`,`batchNo`,`pid`) values";
 
-		if(count($AddItems) > 0){
-			foreach($AddItems as $key => $i){
-				$queryInsertSales_Data .= "('$RecordDetail->Id',$i->qty,'$i->BatchNo','$i->Pid'),";
-				$queryUpdateProduct_Stock .= "Update prod_stock set stock = stock - $i->qty where Pid = '".$i->Pid."' and BatchNo = '".$i->BatchNo."';";
-			}
-			$queryInsertSales_Data = substr($queryInsertSales_Data, 0, -1).";";
-			//echo "<br> Insert Queries: ".($queryInsertSales_Data.$queryUpdateProduct_Stock);
-			$this->dbHandler->ExecuteMultipleQuery($queryInsertSales_Data.$queryUpdateProduct_Stock);
-		}
-		if(count($UpdateItems) > 0){
-			$queryUpdateProduct_Stock = "";
-			foreach($UpdateItems as $key => $i){
-				$queryUpdateSales_Data .= "Update sales_data set qty = $i->qty where bill_id = '".$RecordDetail->Id."' and Pid = '".$i->Pid."' and batchNo = '".$i->BatchNo."';";
-				$queryUpdateProduct_Stock .= "Update prod_stock set stock = ".($i->stock - $i->qty)." where Pid = '".$i->Pid."' and BatchNo = '".$i->BatchNo."';";
-			}
-			//echo "<br> Update Queries: ".($queryUpdateSales_Data.$queryUpdateProduct_Stock);
-			$this->dbHandler->ExecuteMultipleQuery($queryUpdateSales_Data.$queryUpdateProduct_Stock);
-		}
-		if(count($RemoveItems) > 0){
-			$queryUpdateProduct_Stock = "";
-			foreach($RemoveItems as $key => $i){
-				$queryDeleteSales_Data .= "Delete from sales_data where bill_id = '".$RecordDetail->Id."' and Pid = '".$i->Pid."' and batchNo = '".$i->BatchNo."';";
-				$queryUpdateProduct_Stock .= "Update prod_stock set stock = stock + $i->qty where Pid = '".$i->Pid."' and BatchNo = '".$i->BatchNo."';";
-			}
-			//echo "<br> Remove Queries: ".($queryDeleteSales_Data.$queryUpdateProduct_Stock);
-			$this->dbHandler->ExecuteMultipleQuery($queryDeleteSales_Data.$queryUpdateProduct_Stock);
-		}
+		// if(count($AddItems) > 0){
+			// foreach($AddItems as $key => $i){
+				// $queryInsertSales_Data .= "('$RecordDetail->Id',$i->qty,'$i->BatchNo','$i->Pid'),";
+				// $queryUpdateProduct_Stock .= "Update prod_stock set stock = stock - $i->qty where Pid = '".$i->Pid."' and BatchNo = '".$i->BatchNo."';";
+			// }
+			// $queryInsertSales_Data = substr($queryInsertSales_Data, 0, -1).";";
+			// echo "<br> Insert Queries: ".($queryInsertSales_Data.$queryUpdateProduct_Stock);
+			// $this->dbHandler->ExecuteMultipleQuery($queryInsertSales_Data.$queryUpdateProduct_Stock);
+		// }
+		// if(count($UpdateItems) > 0){
+			// $queryUpdateProduct_Stock = "";
+			// foreach($UpdateItems as $key => $i){
+				// $queryUpdateSales_Data .= "Update sales_data set qty = $i->qty where bill_id = '".$RecordDetail->Id."' and Pid = '".$i->Pid."' and batchNo = '".$i->BatchNo."';";
+				// $queryUpdateProduct_Stock .= "Update prod_stock set stock = ".($i->stock - $i->qty)." where Pid = '".$i->Pid."' and BatchNo = '".$i->BatchNo."';";
+			// }
+			// echo "<br> Update Queries: ".($queryUpdateSales_Data.$queryUpdateProduct_Stock);
+			// $this->dbHandler->ExecuteMultipleQuery($queryUpdateSales_Data.$queryUpdateProduct_Stock);
+		// }
+		// if(count($RemoveItems) > 0){
+			// $queryUpdateProduct_Stock = "";
+			// foreach($RemoveItems as $key => $i){
+				// $queryDeleteSales_Data .= "Delete from sales_data where bill_id = '".$RecordDetail->Id."' and Pid = '".$i->Pid."' and batchNo = '".$i->BatchNo."';";
+				// $queryUpdateProduct_Stock .= "Update prod_stock set stock = stock + $i->qty where Pid = '".$i->Pid."' and BatchNo = '".$i->BatchNo."';";
+			// }
+			// echo "<br> Remove Queries: ".($queryDeleteSales_Data.$queryUpdateProduct_Stock);
+			// $this->dbHandler->ExecuteMultipleQuery($queryDeleteSales_Data.$queryUpdateProduct_Stock);
+		// }
 	}
 	
 	private function DeleteSalesRecord($data){
@@ -339,8 +347,28 @@ class SalesController{
 		echo '"Error": false';
 		
 		$this->dbHandler->ExecuteQuery("Delete from Sales where id = '".$data['RecordId']."'");
-
-		$query = "select s.Pid as Pid,p.BatchNo as batchNo,p.qty as qty from prod_stock as s, sales_data as p where p.bill_id = '".$data['RecordId']."' and p.pid = s.pid and p.batchNo = s.batchNo;";
+		
+		$this->_DeleteSalesRecordData($data['RecordId']);
+		// $query = "select s.Pid as Pid,p.BatchNo as batchNo,p.qty as qty from prod_stock as s, sales_data as p where p.bill_id = '".$data['RecordId']."' and p.pid = s.pid and p.batchNo = s.batchNo;";
+		// $resultSet = $this->dbHandler->ExecuteQuery($query);
+		// $no_records = mysqli_num_rows($resultSet);
+		// $queryUpdateProduct_Stock = "";
+		// $queryDeleteSales_Data = "";
+		
+		// if($no_records > 0){
+			// while ($row = mysqli_fetch_assoc($resultSet)) {
+				// $queryUpdateProduct_Stock .= "Update prod_stock set stock = stock + ".$row['qty']." where Pid = '".$row['Pid']."' and BatchNo = '".$row['batchNo']."';";
+				// $queryDeleteSales_Data .= "Delete from sales_data where Pid = '".$row['Pid']."' and BatchNo = '".$row['batchNo']."' and bill_id = '".$data['RecordId']."';";
+			// }
+			// $this->dbHandler->ExecuteMultipleQuery($queryUpdateProduct_Stock.$queryDeleteSales_Data);
+			// echo "<br><br> Update Stock: <br> ".$queryUpdateProduct_Stock.$queryDeleteSales_Data;
+		// }			
+		
+		echo "}";
+	}
+	
+	private function _DeleteSalesRecordData($recordId){
+		$query = "select s.Pid as Pid,p.BatchNo as batchNo,p.qty as qty from prod_stock as s, sales_data as p where p.bill_id = '$recordId' and p.pid = s.pid and p.batchNo = s.batchNo;";
 		$resultSet = $this->dbHandler->ExecuteQuery($query);
 		$no_records = mysqli_num_rows($resultSet);
 		$queryUpdateProduct_Stock = "";
@@ -349,13 +377,11 @@ class SalesController{
 		if($no_records > 0){
 			while ($row = mysqli_fetch_assoc($resultSet)) {
 				$queryUpdateProduct_Stock .= "Update prod_stock set stock = stock + ".$row['qty']." where Pid = '".$row['Pid']."' and BatchNo = '".$row['batchNo']."';";
-				$queryDeleteSales_Data .= "Delete from sales_data where Pid = '".$row['Pid']."' and BatchNo = '".$row['batchNo']."' and bill_id = '".$data['RecordId']."';";
+				$queryDeleteSales_Data .= "Delete from sales_data where Pid = '".$row['Pid']."' and BatchNo = '".$row['batchNo']."' and bill_id = '$recordId';";
 			}
-			$this->dbHandler->ExecuteMultipleQuery($queryUpdateProduct_Stock.$queryDeleteSales_Data);
-			//echo "<br><br> Update Stock: <br> ".$queryUpdateProduct_Stock.$queryDeleteSales_Data;
+			// $this->dbHandler->ExecuteMultipleQuery($queryUpdateProduct_Stock.$queryDeleteSales_Data);
+			echo "<br><br> Update sales Stock: <br> ".$queryUpdateProduct_Stock.$queryDeleteSales_Data;
 		}			
-		
-		echo "}";
 	}
 	/**
 	*  function will return no of records based on search criteria or will return the query needed to search in database based on $returnQuery
