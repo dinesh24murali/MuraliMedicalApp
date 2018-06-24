@@ -248,17 +248,19 @@ class PurchaseController{
 		if($no_records > 0){
 			while ($row = mysqli_fetch_assoc($resultSet)) {
 				$queryUpdateProduct_Stock .= "Update prod_stock set stock = stock - ".($row['qty'] * $row['pack'])." where Pid = '".$row['Pid']."' and BatchNo = '".$row['batchNo']."';";
-				$queryDeletePurchase_Data .= "Delete from purchase_data where Pid = '".$row['Pid']."' and BatchNo = '".$row['batchNo']."' and bill_id = '".$recordId."';";
 			}
-			$this->dbHandler->ExecuteMultipleQuery($queryUpdateProduct_Stock.$queryDeletePurchase_Data);
+			$queryDeletePurchase_Data .= "Delete from purchase_data where bill_id = '".$recordId."';";
+			// I have no idea how this is working but I solved a confusing error by splitting one statement into two here
+			$this->dbHandler->ExecuteMultipleQuery($queryUpdateProduct_Stock);
+			$this->dbHandler->ExecuteMultipleQuery($queryDeletePurchase_Data);
 			// echo "<br><br> Update Stock: <br> ".$queryUpdateProduct_Stock.$queryDeletePurchase_Data;
 		}
 	}
 	
 	private function _AddPurchaseData($recordId,$data){
 		
-		$queryPurchase_Data = "Insert into purchase_data (`bill_id`,`qty`,`batchNo`,`pid`) values";
-		$queryProduct_Stock = "Insert into prod_stock (`Pid`,`Pname`,`manufacturer`,`type`,`tax_percent`,`pack`,`BatchNo`,`stock`,`Exp_date`,`mrp`,`P_rate`) values";
+		$queryPurchase_Data = "Insert into purchase_data (`bill_id`,`qty`,`batchNo`,`pid`) values ";
+		$queryProduct_Stock = "Insert into prod_stock (`Pid`,`Pname`,`manufacturer`,`type`,`tax_percent`,`pack`,`BatchNo`,`stock`,`Exp_date`,`mrp`,`P_rate`) values ";
 		$queryUpdates = "";
 		$queryUpdateProduct_tax = "";
 		$InsertNewProd_StockFlag = false;
@@ -290,7 +292,7 @@ class PurchaseController{
 					$queryUpdateProduct_tax .= "update prod_stock set tax_percent = '$value->tax_percent' where Pid = '$value->Pid';";
 				}else{
 					// update the batch details when 
-					$queryUpdates = "update prod_stock set stock = stock + ".($value->qty * $value->pack).",Exp_date='".strftime("%Y-%d-%m", strtotime("01/".$value->Exp_date))."',mrp = '".round($value->mrp/$value->pack,2)."', P_rate = '".round($value->P_rate/$value->pack,2)."',pack = $value->pack where Pid = '$value->Pid' and batchNo = '$value->BatchNo';";
+					$queryUpdates .= "update prod_stock set stock = stock + ".($value->qty * $value->pack).",Exp_date='".strftime("%Y-%d-%m", strtotime("01/".$value->Exp_date))."',mrp = '".round($value->mrp/$value->pack,2)."', P_rate = '".round($value->P_rate/$value->pack,2)."',pack = $value->pack where Pid = '$value->Pid' and batchNo = '$value->BatchNo';";
 					$UpdateStockFlag = true;
 					$queryPurchase_Data .= "('$recordId',".$value->qty.",'".$value->BatchNo."','$value->Pid'),";
 					// update tax precent
@@ -299,12 +301,13 @@ class PurchaseController{
 			}
 		}
 		$queryPurchase_Data = substr($queryPurchase_Data, 0, -1).";";
-		// echo "<br><br> ".$queryPurchase_Data;
+		
+		// echo "<br><br> Insert into purchase_data: ".$queryPurchase_Data;
 		$this->dbHandler->ExecuteInsert($queryPurchase_Data);
 		if($InsertNewProd_StockFlag || $InsertNewBatchFlag){
 			$queryProduct_Stock = substr($queryProduct_Stock, 0, -1).";";
 			$this->dbHandler->ExecuteInsert($queryProduct_Stock);
-			// echo "<br><br> ".$queryProduct_Stock;
+			// echo "<br><br> Insert into prod_stock: ".$queryProduct_Stock;
 		}
 		if($UpdateStockFlag){
 			$this->dbHandler->ExecuteMultipleQuery($queryUpdates);
@@ -312,10 +315,10 @@ class PurchaseController{
 		}
 		// Run the query to update tax percent and batch number_format
 		// this will not be executer if all the products in a purchase order are new products
-		if($InsertNewBatchFlag || $UpdateStockFlag){
-			$this->dbHandler->ExecuteMultipleQuery($queryUpdateProduct_tax);
+		// if($InsertNewBatchFlag || $UpdateStockFlag){
+			// $this->dbHandler->ExecuteMultipleQuery($queryUpdateProduct_tax);
 			// echo "<br><br> ".$queryUpdateProduct_tax;
-		}
+		// }
 	}
 	
 	private function GetCountForFilterRecords($data,$returnQuery){

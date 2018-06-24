@@ -66,7 +66,7 @@ class ComponentsController{
 	*   @param SelQty will have the number of tables selected in the specified batch
 	*/
 	private function _getBatchs($ProductId,$SelectedBatchNo,$SelQty){
-		$query = "SELECT BatchNo,Exp_date,mrp,P_rate,stock,pack FROM `prod_stock` WHERE Pid = '$ProductId' and stock > 0 order by Exp_date asc;";
+		$query = "SELECT BatchNo,Exp_date,mrp,P_rate,stock,pack FROM `prod_stock` WHERE Pid = '$ProductId' order by Exp_date asc;";
 		$result = $this->dbHandler->ExecuteQuery($query);
 		$Exp_date = "";
 		$mrp = 0;

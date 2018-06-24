@@ -73,12 +73,12 @@ class SalesController{
 
 		if($flag){
 			$querySales_Data = substr($querySales_Data, 0, -1).";";
-			// $this->dbHandler->ExecuteInsert($querySales_Data);
-			echo "<br><br>Add sales data: <br>".$queryUpdates;
+			$this->dbHandler->ExecuteInsert($querySales_Data);
+			// echo "<br><br>Add sales data: <br>".$querySales_Data;
 			
 			if($queryUpdates != ""){
-				// $this->dbHandler->ExecuteMultipleQuery($queryUpdates);
-				echo "<br><br>Update Query: <br>".$queryUpdates;
+				$this->dbHandler->ExecuteMultipleQuery($queryUpdates);
+				// echo "<br><br>Update Query: <br>".$queryUpdates;
 			}
 		}
 	}
@@ -379,8 +379,9 @@ class SalesController{
 				$queryUpdateProduct_Stock .= "Update prod_stock set stock = stock + ".$row['qty']." where Pid = '".$row['Pid']."' and BatchNo = '".$row['batchNo']."';";
 				$queryDeleteSales_Data .= "Delete from sales_data where Pid = '".$row['Pid']."' and BatchNo = '".$row['batchNo']."' and bill_id = '$recordId';";
 			}
-			// $this->dbHandler->ExecuteMultipleQuery($queryUpdateProduct_Stock.$queryDeleteSales_Data);
-			echo "<br><br> Update sales Stock: <br> ".$queryUpdateProduct_Stock.$queryDeleteSales_Data;
+			$this->dbHandler->ExecuteMultipleQuery($queryUpdateProduct_Stock);
+			$this->dbHandler->ExecuteMultipleQuery($queryDeleteSales_Data);
+			// echo "<br><br> Update sales Stock: <br> ".$queryUpdateProduct_Stock.$queryDeleteSales_Data;
 		}			
 	}
 	/**

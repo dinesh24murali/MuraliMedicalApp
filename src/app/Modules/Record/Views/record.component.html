@@ -105,11 +105,11 @@
                 </ngx-datatable-column>
                 <ngx-datatable-column prop="Pname" name="Name"></ngx-datatable-column>
                 <ngx-datatable-column prop="manufacturer" name="Manufacturer"></ngx-datatable-column>
-                <ngx-datatable-column prop="type" name="Type" [width]="100">
+                <!-- <ngx-datatable-column prop="type" name="Type" [width]="100">
                     <ng-template style="width: 135px;" let-row="row" ngx-datatable-cell-template let-value="value">
                         {{value?"Gene":"Non-gene"}}
                     </ng-template>
-                </ngx-datatable-column>
+                </ngx-datatable-column> -->
                 <ngx-datatable-column prop="tax_percent" name="Tax Per" [width]="110">
                     <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
                         <input type="number" [(ngModel)]="row['tax_percent']" class="form-control">
@@ -117,7 +117,7 @@
                 </ngx-datatable-column>
                 <ngx-datatable-column prop="BatchNo" name="Batch Number" [width]="200">
                     <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
-                        <button color="accent" style="float:right;" md-icon-button mdTooltip="{{row['newBatchFlag'] ? 'Cancel' : 'Add New Batch'}}"
+                        <button color="accent" *ngIf="row.Pid" style="float:right;" md-icon-button mdTooltip="{{row['newBatchFlag'] ? 'Cancel' : 'Add New Batch'}}"
                             (click)="toggleAddNewBatch(row)">
                             <!-- <i class="material-icons">{{row['newBatchFlag'] == false ? "add" : "close"}}</i>
                             glyphicon glyphicon-remove -->
@@ -154,12 +154,12 @@
                 </ngx-datatable-column>
                 <ngx-datatable-column prop="mrp" name="MRP" [width]="120">
                     <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
-                        <input type="number" (ngModelChange)="calculateTotal(row)" [(ngModel)]="row['mrp']" class="form-control">
+                        <input type="number" [(ngModel)]="row['mrp']" class="form-control">
                     </ng-template>
                 </ngx-datatable-column>
                 <ngx-datatable-column prop="P_rate" name="P rate" [width]="110">
                     <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
-                        <input type="number" (ngModelChange)="calculateTotal(row)" [(ngModel)]="row['P_rate']" class="form-control">
+                        <input type="number" (keyup)="calculateTotal(row)" [(ngModel)]="row['P_rate']" class="form-control">
                     </ng-template>
                 </ngx-datatable-column>
                 <ngx-datatable-column prop="P_rate" name="Value" [width]="120">
@@ -235,11 +235,11 @@
                 </ngx-datatable-column>
                 <ngx-datatable-column prop="Pname" name="Name"></ngx-datatable-column>
                 <ngx-datatable-column prop="manufacturer" name="Manufacturer"></ngx-datatable-column>
-                <ngx-datatable-column prop="type" name="Type">
+                <!-- <ngx-datatable-column prop="type" name="Type">
                     <ng-template style="width: 135px;" let-row="row" ngx-datatable-cell-template let-value="value">
                         {{value?"Generic":"Non-generic"}}
                     </ng-template>
-                </ngx-datatable-column>
+                </ngx-datatable-column> -->
                 <ngx-datatable-column prop="tax_percent" name="Tax Percent"></ngx-datatable-column>
                 <ngx-datatable-column prop="BatchNo" name="Batch Number" [width]="250">
 
@@ -259,7 +259,7 @@
                 </ngx-datatable-column>
                 <ngx-datatable-column prop="stock" name="Stock">
                     <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
-                        {{value?value:""}}
+                        {{value || value === 0 ?value:""}}
                     </ng-template>
                 </ngx-datatable-column>
 

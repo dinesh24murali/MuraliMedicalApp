@@ -494,6 +494,7 @@ export class RecordComponent implements OnInit, OnDestroy {
       row.value = value;
       this.billAmount += row.value;
     }
+    this.billAmount = Math.round(this.billAmount * 100) / 100;
   }
 
   addNewProduct() {
