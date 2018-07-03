@@ -71,17 +71,17 @@
     <ngx-datatable-column prop="pack" name="Packing"></ngx-datatable-column>
     <ngx-datatable-column prop="mrp" name="MRP">
         <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
-            {{ row['mrp'] * row['pack'] | number: '1.1-2'}}
+            {{ row['mrp'] }}
         </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column prop="P_rate" name="Rate">
         <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
-            {{ row['P_rate'] * row['pack'] | number: '1.1-2'}}
+            {{ row['P_rate'] }}
         </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column prop="P_rate" name="Value">
         <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
-            {{ row['qty'] * (customer ? row['mrp'] : row['P_rate'] * row['pack'] ) | number: '1.1-2'}}
+            {{ row['qty'] * (customer ? row['mrp']/row['pack'] : row['P_rate']) | number: '1.1-2'}}
         </ng-template>
     </ngx-datatable-column>
 </ngx-datatable>

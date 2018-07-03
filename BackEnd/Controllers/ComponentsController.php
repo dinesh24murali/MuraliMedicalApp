@@ -85,14 +85,14 @@ class ComponentsController{
 				$P_rate = $row['P_rate'];
 				$stock = $row['stock'];
 				$pack = $row['pack'];
-				$mrp = $mrp * $pack;
-				$P_rate = $P_rate * $pack;
+				$mrp = $mrp;
+				$P_rate = $P_rate;
 			}
             echo '"Exp_date":"'.date('m/Y',strtotime($row['Exp_date'])).'",';
-            echo '"mrp":'.($row['mrp'] * $row['pack']).',';
+            echo '"mrp":'.$row['mrp'].',';
 			echo '"stock":'.$row['stock'].',';
 			echo '"pack":'.$row['pack'].',';
-            echo '"P_rate":'.($row['P_rate'] * $row['pack']).'';
+            echo '"P_rate":'.$row['P_rate'].'';
             $i++;
             echo $i <= $no_records-1 ? '},' : '}';
         }

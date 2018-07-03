@@ -164,7 +164,7 @@
                 </ngx-datatable-column>
                 <ngx-datatable-column prop="P_rate" name="Value" [width]="120">
                     <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
-                        {{row['BatchNo'] ? row['P_rate'] * row['qty'] : 0}}
+                        {{ (row['BatchNo'] ? row['P_rate'] * row['qty'] : 0) | number: '1.1-2'}}
                     </ng-template>
                 </ngx-datatable-column>
                 <ngx-datatable-footer>
@@ -263,7 +263,11 @@
                     </ng-template>
                 </ngx-datatable-column>
 
-                <ngx-datatable-column prop="value" name="Value"></ngx-datatable-column>
+                <ngx-datatable-column prop="value" name="Value">
+                    <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
+                        {{ value | number: '1.1-2'}}
+                    </ng-template>
+                </ngx-datatable-column>
                 <ngx-datatable-footer>
                     <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-selectedCount="selectedCount">
                         <div style="width:100%">

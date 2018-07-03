@@ -1,14 +1,13 @@
-import { Component, ElementRef, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { MdDialogRef, MdDialog, MdDialogConfig, MdSnackBar } from '@angular/material';
 import { FormControl, Validators } from '@angular/forms';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
+import { ActivatedRoute, Router } from '@angular/router';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/debounceTime';
 
 import { ExceptionDialog } from '../../Shared/Components/exception-dialog.component';
-import { Item, Supplier, PurchaseData, Sales, SalesData } from '../../../Models/Record/Record';
+import { Item, Sales, SalesData } from '../../../Models/Record/Record';
 import { ComponentsService } from '../../../Services/components.service';
 import { PurchaseService } from '../../../Services/purchase.service';
 import { SalesService } from '../../../Services/sales.service';

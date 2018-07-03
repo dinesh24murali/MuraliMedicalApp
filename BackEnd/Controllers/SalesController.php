@@ -119,10 +119,10 @@ class SalesController{
             echo '"BillDate":"'.$row['bill_Date'].'",';
             echo '"Customer":"'.$row['customerId'].'",';
 			
-			$query = "select sum(s.mrp * p.qty) as Sales_amt from prod_stock as s,sales_data as p where p.bill_id = '".$row['id']."' and s.Pid = p.Pid and p.BatchNo = s.batchNo;";
+			$query = "select sum((s.mrp / s.pack) * p.qty) as Sales_amt from prod_stock as s,sales_data as p where p.bill_id = '".$row['id']."' and s.Pid = p.Pid and p.BatchNo = s.batchNo;";
 			$SalesAmt = $this->dbHandler->ExecuteQuery($query);
 			$SalesAmt = mysqli_fetch_assoc($SalesAmt);
-			echo '"Sales_amt":'.$SalesAmt['Sales_amt'].',';
+			echo '"Sales_amt":'.round(floatval($SalesAmt['Sales_amt']), 2).',';
 			
 			$query = "select s.Pname as Pname from prod_stock as s, sales_data as p where p.bill_id = '".$row['id']."' and s.Pid = p.Pid and  p.BatchNo = s.batchNo limit 1;";
 			$items = $this->dbHandler->ExecuteQuery($query);
@@ -184,10 +184,10 @@ class SalesController{
             echo '"BillDate":"'.$row['bill_Date'].'",';
             echo '"Customer":"'.$row['customerId'].'",';
 			
-			$query = "select sum(s.mrp * sd.qty) as Sales_amt from prod_stock as s,sales_data as sd where sd.bill_id = '".$data['RecordId']."' and s.pid = sd.pid and sd.BatchNo = s.batchNo";
+			$query = "select sum((s.mrp / s.pack) * sd.qty) as Sales_amt from prod_stock as s,sales_data as sd where sd.bill_id = '".$data['RecordId']."' and s.pid = sd.pid and sd.BatchNo = s.batchNo";
 			$SalesAmt = $this->dbHandler->ExecuteQuery($query);
 			$SalesAmt = mysqli_fetch_assoc($SalesAmt);
-			echo '"Sales_amt":'.$SalesAmt['Sales_amt'].',';
+			echo '"Sales_amt":'.round(floatval($SalesAmt['Sales_amt']), 2).',';
 			
 			echo '"Items":';
 			if($data['forEdit'] == "1")
@@ -230,7 +230,7 @@ class SalesController{
 			$itemStock = 0;
 			while($selBatches = mysqli_fetch_assoc($selBatchesQuery)){
 				
-				$batchValue = floatval($selBatches['qty']) * floatval($selBatches['mrp']);
+				$batchValue = floatval($selBatches['qty']) * (floatval($selBatches['mrp']) / floatval($selBatches['pack']));
 				$itemValue += $batchValue;
 				$itemQty += intval($selBatches['qty']);
 				$itemStock += intval($selBatches['stock'])+intval($selBatches['qty']);
@@ -239,10 +239,10 @@ class SalesController{
 				echo '"batchQty":'.$selBatches['qty'].',';
 				echo '"batchValue":'.$batchValue.',';
 				echo '"Exp_date":"'.date('m/Y',strtotime($selBatches['Exp_date'])).'",';
-				echo '"mrp":'.($selBatches['mrp'] * $selBatches['pack']).',';
+				echo '"mrp":'.$selBatches['mrp'].',';
 				echo '"pack":'.$selBatches['pack'].',';
 				echo '"stock":'.(intval($selBatches['stock'])+intval($selBatches['qty'])).',';
-				echo '"P_rate":'.($selBatches['P_rate'] * $selBatches['pack']).',';
+				echo '"P_rate":'.$selBatches['P_rate'].',';
 				echo '"show":true';
 				
 				$batches[$i] = $selBatches['batchNo'];
@@ -425,7 +425,7 @@ class SalesController{
 	private function GetTotalAmtForFilterRecords($data){
 
 		$subQuery = $this->GetCountForFilterRecords($data,true);
-		$result = $this->dbHandler->ExecuteQuery("select  sum(sal.qty * stk.mrp) as total_amount from sales_data as sal join prod_stock stk on sal.bill_id in($subQuery) and sal.batchNo = stk.BatchNo and sal.Pid = stk.Pid;");
+		$result = $this->dbHandler->ExecuteQuery("select  sum(sal.qty * (stk.mrp / stk.pack)) as total_amount from sales_data as sal join prod_stock stk on sal.bill_id in($subQuery) and sal.batchNo = stk.BatchNo and sal.Pid = stk.Pid;");
 		$result = mysqli_fetch_assoc($result);
 		echo ' { "total_amount":'.$result['total_amount'].",";
 		$forCount = $this->dbHandler->ExecuteQuery($subQuery);

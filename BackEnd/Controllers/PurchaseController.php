@@ -59,7 +59,7 @@ class PurchaseController{
             echo '"BillDate":"'.$row['bill_Date'].'",';
             echo '"Supplier":"'.$row['name'].'",';
 			
-			$query = "select sum(s.P_rate * p.qty * s.pack) as Purchase_amt from prod_stock as s,purchase_data as p where p.bill_id = '".$data['RecordId']."' and p.BatchNo = s.batchNo";
+			$query = "select sum(s.P_rate * p.qty) as Purchase_amt from prod_stock as s,purchase_data as p where p.bill_id = '".$data['RecordId']."' and p.BatchNo = s.batchNo";
 			$PurchaseAmt = $this->dbHandler->ExecuteQuery($query);
 			$PurchaseAmt = mysqli_fetch_assoc($PurchaseAmt);
 			echo '"Purchase_amt":'.$PurchaseAmt['Purchase_amt'].',';
@@ -118,7 +118,7 @@ class PurchaseController{
 			$supplierName = mysqli_fetch_assoc($supplierName);
             echo '"Supplier":"'.$supplierName['name'].'",';
 			
-			$query = "select sum(s.P_rate * p.qty * s.pack) as Purchase_amt from prod_stock as s,purchase_data as p where p.bill_id = '".$row['id']."' and p.pid = s.pid and p.BatchNo = s.batchNo;";
+			$query = "select sum(s.P_rate * p.qty) as Purchase_amt from prod_stock as s,purchase_data as p where p.bill_id = '".$row['id']."' and p.pid = s.pid and p.BatchNo = s.batchNo;";
 			$PurchaseAmt = $this->dbHandler->ExecuteQuery($query);
 			$PurchaseAmt = mysqli_fetch_assoc($PurchaseAmt);
 			$PurchaseAmt = $PurchaseAmt['Purchase_amt'] == NULL ? 0 : $PurchaseAmt['Purchase_amt'];
@@ -270,7 +270,7 @@ class PurchaseController{
 		foreach ($data as $key => $value){
 			if($value->Pid == ""){		// Checks if its a new Product
 				$Pid = uniqid("P",true);
-				$queryProduct_Stock .= "('$Pid','$value->Pname','$value->manufacturer',".($value->type == "1" ? "true" : "false").",'$value->tax_percent',$value->pack,'$value->BatchNo',".($value->qty * $value->pack).",'".strftime("%Y-%d-%m", strtotime("01/".$value->Exp_date))."','".round($value->mrp/$value->pack,2)."','".round($value->P_rate/$value->pack,2)."'),";
+				$queryProduct_Stock .= "('$Pid','$value->Pname','$value->manufacturer',".($value->type == "1" ? "true" : "false").",'$value->tax_percent',$value->pack,'$value->BatchNo',".($value->qty * $value->pack).",'".strftime("%Y-%d-%m", strtotime("01/".$value->Exp_date))."','".$value->mrp."','".$value->P_rate."'),";
 				$InsertNewProd_StockFlag = true;
 				// Date format that "strtotime" takes in is M/D/Y. But we are supplying D/M/Y. In this case since we are sure that the date will always be 01. we invert format string to "%Y-%d-%m"
 				$queryPurchase_Data .= "('$recordId',$value->qty,'$value->BatchNo','$Pid'),";
@@ -285,14 +285,14 @@ class PurchaseController{
 						$flag = false;
 				}
 				if($flag == true){ // will be true if the user has added a new batch
-					$queryProduct_Stock .= "('$value->Pid','$value->Pname','$value->manufacturer',".($value->type == "1" ? "true" : "false").",'$value->tax_percent',$value->pack,'$value->BatchNo',".($value->qty * $value->pack).",'".strftime("%Y-%d-%m", strtotime("01/".$value->Exp_date))."','".round($value->mrp/$value->pack,2)."','".round($value->P_rate/$value->pack,2)."'),";
+					$queryProduct_Stock .= "('$value->Pid','$value->Pname','$value->manufacturer',".($value->type == "1" ? "true" : "false").",'$value->tax_percent',$value->pack,'$value->BatchNo',".($value->qty * $value->pack).",'".strftime("%Y-%d-%m", strtotime("01/".$value->Exp_date))."','".$value->mrp."','".$value->P_rate."'),";
 					$queryPurchase_Data .= "('$recordId',".$value->qty.",'".$value->BatchNo."','$value->Pid'),";
 					$InsertNewBatchFlag = true;
 					// update tax percent
 					$queryUpdateProduct_tax .= "update prod_stock set tax_percent = '$value->tax_percent' where Pid = '$value->Pid';";
 				}else{
 					// update the batch details when 
-					$queryUpdates .= "update prod_stock set stock = stock + ".($value->qty * $value->pack).",Exp_date='".strftime("%Y-%d-%m", strtotime("01/".$value->Exp_date))."',mrp = '".round($value->mrp/$value->pack,2)."', P_rate = '".round($value->P_rate/$value->pack,2)."',pack = $value->pack where Pid = '$value->Pid' and batchNo = '$value->BatchNo';";
+					$queryUpdates .= "update prod_stock set stock = stock + ".($value->qty * $value->pack).",Exp_date='".strftime("%Y-%d-%m", strtotime("01/".$value->Exp_date))."',mrp = '".$value->mrp."', P_rate = '".$value->P_rate."',pack = $value->pack where Pid = '$value->Pid' and batchNo = '$value->BatchNo';";
 					$UpdateStockFlag = true;
 					$queryPurchase_Data .= "('$recordId',".$value->qty.",'".$value->BatchNo."','$value->Pid'),";
 					// update tax precent
@@ -360,7 +360,7 @@ class PurchaseController{
 	private function GetTotalAmtForFilterRecords($data){
 
 		$subQuery = $this->GetCountForFilterRecords($data,true);
-		$result = $this->dbHandler->ExecuteQuery("select  sum(pur.qty * stk.P_rate * stk.pack) as total_amount from purchase_data as pur join prod_stock stk on pur.bill_id in($subQuery) and pur.batchNo = stk.BatchNo and pur.Pid = stk.Pid;");
+		$result = $this->dbHandler->ExecuteQuery("select  sum(pur.qty * stk.P_rate) as total_amount from purchase_data as pur join prod_stock stk on pur.bill_id in($subQuery) and pur.batchNo = stk.BatchNo and pur.Pid = stk.Pid;");
 		$result = mysqli_fetch_assoc($result);
 		echo ' { "total_amount":'.$result['total_amount'].",";
 		$forCount = $this->dbHandler->ExecuteQuery($subQuery);
