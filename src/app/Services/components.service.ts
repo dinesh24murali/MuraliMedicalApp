@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/map';
 import { Item } from '../Models/Record/Record';
-import { GlobalConstants } from '../GlobalConstants/GlobalConstants';
+import { GlobalConstants } from '../core/GlobalConstants/GlobalConstants';
 
 @Injectable()
 export class ComponentsService {
@@ -24,10 +24,5 @@ export class ComponentsService {
         let options = new RequestOptions({ headers: headers });
         return this.http.post(this.host + "/medical/main.php/Components/GetFilteredBatches", 'data={"queryString":"' + searchText + '","Pid":"' + Pid + '"}', options)
             .map(response => response.json());
-    }
-
-    private handleError(error: any): Promise<any> {
-        console.error('error occured', error);
-        return Promise.reject(error.message || error);
     }
 }

@@ -3,31 +3,32 @@ import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'date-filter',
-    template: `<md-grid-list [cols]="cols" [rowHeight]="rowHeight">
-    <md-grid-tile [colspan]="colspan">
-        <md-input-container class="full-width">
-            <input mdInput [mdDatepicker]="FromDate" placeholder="From Date" [formControl]="fromDate">
-            <button mdSuffix [mdDatepickerToggle]="FromDate"></button>
-        </md-input-container>
-        <md-datepicker #FromDate></md-datepicker>
-    </md-grid-tile>
+    template: `<mat-grid-list [cols]="cols" [rowHeight]="rowHeight">
+    <mat-grid-tile [colspan]="colspan">
+        <mat-form-field class="full-width">
+            <input matInput autocomplete="off" [matDatepicker]="FromDate" placeholder="From Date" [formControl]="fromDate">
+            <mat-datepicker-toggle matSuffix [for]="FromDate"></mat-datepicker-toggle>
+            <mat-datepicker #FromDate></mat-datepicker>
+        </mat-form-field>
+    </mat-grid-tile>
 
-    <md-grid-tile [colspan]="colspan">
-        <md-input-container class="full-width">
-            <input mdInput [mdDatepicker]="ToDate" placeholder="To Date" [formControl]="toDate">
-            <button mdSuffix [mdDatepickerToggle]="ToDate"></button>
-        </md-input-container>
-        <md-datepicker #ToDate></md-datepicker>
-    </md-grid-tile>
-    <md-grid-tile [colspan]="colspan">
-        <button (click)="searchRecords()" md-raised-button color="primary">
+    <mat-grid-tile [colspan]="colspan">
+        <mat-form-field class="full-width">
+            <input matInput autocomplete="off" [matDatepicker]="ToDate" placeholder="To Date" [formControl]="toDate">
+            <mat-datepicker-toggle matSuffix [for]="ToDate"></mat-datepicker-toggle>
+            <mat-datepicker #ToDate></mat-datepicker>
+        </mat-form-field>
+
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="colspan">
+        <button (click)="searchRecords()" mat-raised-button color="primary">
             <span class="glyphicon glyphicon-search"></span> Search</button>
-    </md-grid-tile>
-    <md-grid-tile [colspan]="colspan">
-        <button (click)="clearFilter()" md-raised-button>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="colspan">
+        <button (click)="clearFilter()" mat-raised-button>
             Clear</button>
-    </md-grid-tile>
-</md-grid-list> `
+    </mat-grid-tile>
+</mat-grid-list> `
 })
 export class DateFilter {
 

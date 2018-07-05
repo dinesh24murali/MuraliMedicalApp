@@ -1,5 +1,5 @@
 import { Component} from '@angular/core';
-import {MdDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 
 @Component({
   selector: 'dialog-result-example-dialog',
@@ -9,6 +9,6 @@ export class DialogTempComponent {
   public title:string;
   public message: string;
 
-  constructor(public dialogRef: MdDialogRef<DialogTempComponent>) {
+  constructor(public dialogRef: MatDialogRef<DialogTempComponent>) {
   }
 }

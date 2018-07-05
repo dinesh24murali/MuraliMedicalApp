@@ -35,14 +35,18 @@
       <a routerLink="/finance/Purchase" class="w3-bar-item w3-button">Purchase Status</a>
     </div>
 
-    <!-- <a routerLink="/record/Purchase" class="w3-bar-item w3-button">Add Purchase Record</a>
-    <a routerLink="/record/Sales" class="w3-bar-item w3-button">Add Sales Record</a>
-    <a routerLink="/sample" class="w3-bar-item w3-button">Sample Table</a> -->
+    <button style="top: 100px;" class="w3-button w3-block w3-left-align" (click)="openAccordion('Product')">
+      Product
+      <b class="caret"></b>
+    </button>
+    <div id="AccordionProduct" class="w3-hide w3-white w3-card-2">
+      <a routerLink="/product" class="w3-bar-item w3-button">Edit product</a>
+    </div>
   </div>
 </div>
 
 <div class="w3-main" id="main">
-  <nav class="navbar navbar-default navbar-fixed-top">
+  <nav *ngIf="!hideTopNavBar" class="navbar navbar-default navbar-fixed-top">
     <div class="container-fluid">
       <div>
         <ul class="nav navbar-nav">

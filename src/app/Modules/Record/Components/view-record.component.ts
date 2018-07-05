@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Params, Router, NavigationExtras } from '@angular/router';
-import { MdSnackBar, MdDialogRef, MdDialog, MdDialogConfig, MdSidenav } from '@angular/material';
+import { MatSnackBar, MatDialogRef, MatDialog, MatDialogConfig, MatSidenav } from '@angular/material';
 import { FormControl, Validators } from '@angular/forms';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { DatePipe } from '@angular/common';
@@ -10,7 +10,7 @@ import { ExceptionDialog } from '../../Shared/Components/exception-dialog.compon
 import { Purchase, PurchaseData, Sales, SalesData, FilterPurchaseSearchCriteria, FilterSalesSearchCriteria } from '../../../Models/Record/Record';
 import { PurchaseService } from '../../../Services/purchase.service';
 import { SalesService } from '../../../Services/sales.service';
-import { GlobalConstants } from "../../../GlobalConstants/GlobalConstants";
+import { GlobalConstants } from "../../../core/GlobalConstants/GlobalConstants";
 
 @Component({
   selector: 'view-record',
@@ -22,7 +22,7 @@ import { GlobalConstants } from "../../../GlobalConstants/GlobalConstants";
   .view-container{
     width:1000px;
   }
-  md-sidenav-container {
+  .sidenav-container {
     position: fixed;
     height: 100%;
     min-height: 100%;
@@ -89,13 +89,13 @@ export class ViewRecordComponent implements OnInit, OnDestroy {
   reachedEndOfRecords: boolean = false;
 
   @ViewChild(DatatableComponent) table: DatatableComponent;
-  @ViewChild('sidenav') public viewRecordNav: MdSidenav;
+  @ViewChild('sidenav') public viewRecordNav: MatSidenav;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    public snackBar: MdSnackBar,
-    public dialog: MdDialog,
+    public snackBar: MatSnackBar,
+    public dialog: MatDialog,
     private purchaseService: PurchaseService,
     private salesService: SalesService
   ) { }
@@ -241,8 +241,8 @@ export class ViewRecordComponent implements OnInit, OnDestroy {
   }
 
   openDialog(title: string, message: string): void {
-    let config = new MdDialogConfig(),
-      dialogRef: MdDialogRef<DialogTempComponent> = this.dialog.open(DialogTempComponent, config);
+    let config = new MatDialogConfig(),
+      dialogRef: MatDialogRef<DialogTempComponent> = this.dialog.open(DialogTempComponent, config);
     dialogRef.componentInstance.title = "Confirm Delete";
     dialogRef.componentInstance.message = "Are you sure?";
   }
@@ -339,8 +339,8 @@ export class ViewRecordComponent implements OnInit, OnDestroy {
   }
 
   _openExceptionDialog(message: string): void {
-    let config = new MdDialogConfig(),
-      dialogRef: MdDialogRef<ExceptionDialog> = this.dialog.open(ExceptionDialog, config);
+    let config = new MatDialogConfig(),
+      dialogRef: MatDialogRef<ExceptionDialog> = this.dialog.open(ExceptionDialog, config);
     dialogRef.componentInstance.title = "Exception";
     dialogRef.componentInstance.message = message;
   }

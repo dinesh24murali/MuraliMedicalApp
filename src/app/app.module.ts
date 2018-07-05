@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
+import { StoreModule } from '@ngrx/store';
 
 import { ɵROUTER_PROVIDERS } from '@angular/router';
-import { MaterialModule, MdNativeDateModule } from '@angular/material';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
+import { MaterialLoaderModule } from './Modules/MaterialLoader/material-loader.module';
 import { AppRoutingModule } from './Route/app-routing.module';
 import { DashBoardComponent } from './Modules/Dashboard/dashboard.component';
 import { RecordComponent } from './Modules/Record/Components/record.component';
@@ -31,17 +31,20 @@ import { UtilsService } from './Services/utils.service';
 import { SupplierService } from './Services/supplier.service';
 import { FinancialViewerService } from './Services/financial-viewer.service';
 
+import { AppManagementReducer } from './core/store/app.reducers';
+
 @NgModule({
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
-        MaterialModule,
+        MaterialLoaderModule,
         HttpModule,
         FormsModule,
         ReactiveFormsModule,
-        MdNativeDateModule,
         AppRoutingModule,
-        NgxDatatableModule
+        NgxDatatableModule,
+        StoreModule.forFeature('AppManagement', AppManagementReducer),
+        StoreModule.forRoot({})
     ],
     declarations: [
         DashBoardComponent,

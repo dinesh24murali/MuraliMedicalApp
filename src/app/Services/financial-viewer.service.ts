@@ -3,7 +3,7 @@ import { Http, RequestOptions, Headers } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/map';
-import { GlobalConstants } from '../GlobalConstants/GlobalConstants';
+import { GlobalConstants } from '../core/GlobalConstants/GlobalConstants';
 
 @Injectable()
 export class FinancialViewerService {

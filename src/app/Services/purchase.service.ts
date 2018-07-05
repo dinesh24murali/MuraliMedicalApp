@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/map';
 import { Purchase, Item, PurchaseData, FilterPurchaseSearchCriteria } from '../Models/Record/Record';
-import { GlobalConstants } from '../GlobalConstants/GlobalConstants';
+import { GlobalConstants } from '../core/GlobalConstants/GlobalConstants';
 
 @Injectable()
 export class PurchaseService {
@@ -40,15 +40,13 @@ export class PurchaseService {
     GetPurchaseRecord(RecordId: string, forEdit: boolean): Promise<any> {
 
         return this.http.post(this.host + "/medical/main.php/Purchase/GetPurchaseRecord", 'data={"RecordId":"' + RecordId + '","forEdit":' + forEdit + '}', this.options).toPromise()
-            .then(response => response.json() as any)
-            .catch(this.handleError);
+            .then(response => response.json() as any);
     }
 
     GetPurchaseRecords(searchCriteria: FilterPurchaseSearchCriteria): Promise<Purchase[]> {
         let postRequestData: string = 'data={"SearchCriteria":' + encodeURIComponent(JSON.stringify(searchCriteria)) + '}';
         return this.http.post(this.host + "/medical/main.php/Purchase/GetPurchaseRecords", postRequestData, this.options).toPromise()
-            .then(response => response.json() as Purchase[])
-            .catch(this.handleError);
+            .then(response => response.json() as Purchase[]);
     }
 
     GetCountForFilterRecords(searchCriteria: FilterPurchaseSearchCriteria): Promise<number> {
@@ -59,29 +57,25 @@ export class PurchaseService {
                     return parseInt(response._body.trim());
                 else
                     return 0;
-            })
-            .catch(this.handleError);
+            });
     }
 
     GetPurchaseRecordData(RecordId: string): Promise<PurchaseData[]> {
 
         return this.http.post(this.host + "/medical/main.php/Purchase/GetPurchaseRecordData", 'data={"RecordId":"' + RecordId + '"}', this.options).toPromise()
-            .then(response => response.json() as PurchaseData[])
-            .catch(this.handleError);
+            .then(response => response.json() as PurchaseData[]);
     }
 
     DeletePurchaseRecord(RecordId: string): Promise<any> {
 
         return this.http.post(this.host + "/medical/main.php/Purchase/DeletePurchaseRecord", 'data={"RecordId":"' + RecordId + '"}', this.options).toPromise()
-            .then((response: any) => JSON.parse(response._body))
-            .catch(this.handleError);
+            .then((response: any) => JSON.parse(response._body));
     }
 
     GetTotalAmtForFilterRecords(searchCriteria: FilterPurchaseSearchCriteria): Promise<any> {
         let postRequestData: string = 'data={"SearchCriteria":' + encodeURIComponent(JSON.stringify(searchCriteria)) + '}';
         return this.http.post(this.host + "/medical/main.php/Purchase/GetTotalAmtForFilterRecords", postRequestData, this.options).toPromise()
-            .then(response => { return response.json() })
-            .catch(this.handleError);
+            .then(response => { return response.json() });
     }
 
     AddPurchaseRecordExpress(purchase: Purchase, items: Item[]): Promise<any> {
@@ -91,10 +85,5 @@ export class PurchaseService {
             .catch(function (response) {
                 return { Error: true, Message: 'Network Error' };
             });
-    }
-
-    private handleError(error: any): Promise<any> {
-        console.error('error occured', error);
-        return Promise.reject(error.message || error);
     }
 }

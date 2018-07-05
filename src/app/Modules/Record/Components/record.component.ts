@@ -1,5 +1,5 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
-import { MdDialogRef, MdDialog, MdDialogConfig, MdSnackBar } from '@angular/material';
+import { MatDialogRef, MatDialog, MatDialogConfig, MatSnackBar } from '@angular/material';
 import { FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import 'rxjs/add/operator/startWith';
@@ -16,6 +16,7 @@ import { SupplierService } from '../../../Services/supplier.service';
 import { AddNewProductDialog } from '../../Shared/Components/addNewProduct-temp.component';
 
 import { PurchaseHelper } from '../HelperClasses/PurchaseHelper';
+import { GlobalConstants } from '../../../core/GlobalConstants/GlobalConstants';
 
 @Component({
   selector: 'record',
@@ -32,6 +33,9 @@ import { PurchaseHelper } from '../HelperClasses/PurchaseHelper';
       width: 100%;
       min-width: 80%;
     }
+    .select-width{
+      width: 100px;
+    }
 `]
 })
 export class RecordComponent implements OnInit, OnDestroy {
@@ -45,7 +49,7 @@ export class RecordComponent implements OnInit, OnDestroy {
   selectAllToggle: any;
   filteredProducts: any;
   filteredSuppliers: any;
-  selectedItems: any[] = [];
+  selectedItems: any;
   title: string;
   private routeSubscribe: any;
   private querySubscribe: any;
@@ -73,20 +77,20 @@ export class RecordComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.id = undefined;
     let scope = this;
+    this.selectedItems = [];
 
     this.querySubscribe = this.route
       .queryParamMap
       .subscribe(params => {
         this.id = params.get('id');
         if (!this.id)
-          this.reset();
+          this.resetForm();
       });
 
     this.routeSubscribe = this.route.params.subscribe(params => {
-      let scope = this;
       this.title = params['type'];
       if (this.id == undefined)
-        this.reset();
+        this.resetForm();
       else {
         if (this.title == "Purchase") {
           this.purchaseService.GetPurchaseRecord(this.id, true)
@@ -155,7 +159,7 @@ export class RecordComponent implements OnInit, OnDestroy {
       });
   }
 
-  reset() {
+  resetForm() {
     this.selectedItems = [];
     this.checkedItems = [];
     this.products.reset();
@@ -181,15 +185,15 @@ export class RecordComponent implements OnInit, OnDestroy {
   constructor(
     private _router: Router,
     private route: ActivatedRoute,
-    public snackBar: MdSnackBar,
-    public dialog: MdDialog,
+    public snackBar: MatSnackBar,
+    public dialog: MatDialog,
     private componentsService: ComponentsService,
     private purchaseService: PurchaseService,
     private salesService: SalesService,
     private supplierService: SupplierService
   ) {
     this.salesHelper = new SalesHelper(this.salesService);
-    this.purchaseOperations = new PurchaseHelper(this.snackBar, this.dialog);
+    this.purchaseOperations = new PurchaseHelper();
   }
 
   fillDetailsPurchase(event: any, row: any) {
@@ -378,7 +382,7 @@ export class RecordComponent implements OnInit, OnDestroy {
     } else {
       if (this.billNo.valid && this.billDate.valid && this.CustomerName.valid) {
         let flag = false, msg = "";
-        this.selectedItems.forEach(function (item, index) {
+        this.selectedItems.forEach(function (item) {
           if (item.value == 0) {
             flag = true;
             msg = "check values for " + item.Pname;
@@ -401,16 +405,13 @@ export class RecordComponent implements OnInit, OnDestroy {
     }
   }
   _verifyItems() {
-    let flag = true,
-      exp = /^([0-9]{2})\/([0-9]{4})$/;
-    this.selectedItems.forEach(function (item, index) {
-      if (flag) {
-        if (!item.BatchNo || !exp.test(item.Exp_date) || parseInt(item.Exp_date.split('/')[0]) > 12 || !item.manufacturer || item.mrp <= 0 || item.P_rate <= 0 || item.qty <= 0 || item.tax_percent < 0) {
-          flag = false;
-        }
-      } else
-        return;
-    });
+    let flag = true;
+    for (let item of this.selectedItems) {
+      if (!item.BatchNo || !GlobalConstants.expiryDatePattern.test(item.Exp_date) || parseInt(item.Exp_date.split('/')[0]) > 12 || !item.manufacturer || item.mrp <= 0 || item.P_rate <= 0 || item.qty <= 0 || item.tax_percent < 0) {
+        flag = false;
+        break;
+      }
+    }
     return flag;
   }
 
@@ -497,60 +498,31 @@ export class RecordComponent implements OnInit, OnDestroy {
   }
 
   addNewProduct() {
-    let config = new MdDialogConfig(), selectedOption,
-      dialogRef: MdDialogRef<AddNewProductDialog> = this.dialog.open(AddNewProductDialog, {
-        height: '60%',
-        width: '60%'
+    let dialogRef: MatDialogRef<AddNewProductDialog> = this.dialog.open(AddNewProductDialog, {
+      height: '60%',
+      width: '60%',
+      disableClose: true
+    });
+    dialogRef.componentInstance.onSave.subscribe(response => {
+      this.snackBar.open("Record Added", "ok", {
+        duration: 3000
       });
-    dialogRef.afterClosed().subscribe(result => {
-      let selectedOption = result,
-        dialogCtrls = dialogRef.componentInstance;
-      if (result == "OK") {
-        if (dialogCtrls.name.valid && dialogCtrls.manufacturer.valid && dialogCtrls.tax_percent.valid && dialogCtrls.BatchNo.valid && dialogCtrls.Exp_date.valid && dialogCtrls.Exp_date.value.split('/')[0] <= 12 && dialogCtrls.mrp.valid && dialogCtrls.P_rate.valid) {
-          let NewItem: any = {
-            Pid: "",
-            Pname: dialogCtrls.name.value,
-            manufacturer: dialogCtrls.manufacturer.value,
-            type: dialogCtrls.type,
-            tax_percent: dialogCtrls.tax_percent.value,
-            BatchNo: dialogCtrls.BatchNo.value,
-            Batches: [],
-            Exp_date: dialogCtrls.Exp_date.value,
-            qty: 0,
-            pack: 0,
-            stock: 0,
-            mrp: dialogCtrls.mrp.value,
-            newBatchFlag: true,
-            P_rate: dialogCtrls.P_rate.value
-          };
-          this.snackBar.open("Record Added", "ok", {
-            duration: 3000
-          });
-          this.selectedItems.push(NewItem);
-          this.selectedItems = [...this.selectedItems];
-        } else
-          this.snackBar.open("Invalied Details", "ok", {
-            duration: 3000
-          });
-      }
+      this.selectedItems.push(response);
+      this.selectedItems = [...this.selectedItems];
     });
   }
 
   _openExceptionDialog(message: string): void {
-    let config = new MdDialogConfig(),
-      dialogRef: MdDialogRef<ExceptionDialog> = this.dialog.open(ExceptionDialog, config);
+    let config = new MatDialogConfig(),
+      dialogRef: MatDialogRef<ExceptionDialog> = this.dialog.open(ExceptionDialog, config);
     dialogRef.componentInstance.title = "Exception";
     dialogRef.componentInstance.message = message;
   }
 
-  toggleExpandRow(row: any, flag: any) {
-    if (!flag && row.BatchNo.length > 0) {
-      row.toggleVisible = !row.toggleVisible;
+  toggleExpandRow(row: any, expanded: any) {
+    this.recordTable.rowDetail.collapseAllRows();
+    if (!expanded)
       this.recordTable.rowDetail.toggleExpandRow(row);
-    } else if (row.toggleVisible == true) {
-      row.toggleVisible = false;
-      this.recordTable.rowDetail.toggleExpandRow(row);
-    }
   }
 
   toggleAddNewBatch(row: any) {
@@ -563,7 +535,6 @@ export class RecordComponent implements OnInit, OnDestroy {
       row.qty = 0;
       row.P_rate = 0;
     }
-
     row.newBatchFlag = !row.newBatchFlag;
   }
 
@@ -571,10 +542,12 @@ export class RecordComponent implements OnInit, OnDestroy {
 
     let flag = true;
 
-    row.Batches.forEach(function (item: any) {
-      if (item.BatchNumber.startsWith(event.srcElement.value))
-        return flag = false;
-    });
+    for (let item of row.Batches) {
+      if (item.BatchNumber.startsWith(event.srcElement.value)) {
+        flag = false;
+        break;
+      }
+    }
 
     if (flag || event.srcElement.value == "")
       this.componentsService.GetFilteredBatches(event.srcElement.value, row.Pid)
@@ -596,10 +569,6 @@ export class RecordComponent implements OnInit, OnDestroy {
     else if (row.Exp_date.length >= 3 && row.Exp_date.indexOf('/') < 0)
       row.Exp_date = row.Exp_date.substr(0, 2) + "/" + row.Exp_date.substring(2, row.Exp_date.length);
 
-  }
-
-  getHeight(row: any, index: number) {
-    return (row.BatchNo.length * 32) + (row.BatchNo.length > 0 ? 40 : 0);
   }
 }
 

@@ -1,32 +1,32 @@
-<md-sidenav-container>
+<mat-sidenav-container class="sidenav-container">
     <div class="container">
 
         <h4 align="center" class="title-padding">{{title}}</h4>
-        <md-card>
-            <md-grid-list cols="4" rowHeight="4:1">
-                <md-grid-tile [colspan]="1">
-                    <md-input-container class="full-width">
-                        <input mdInput type='text' placeholder='Filter by Bill No' [(ngModel)]="filterBillNo" />
-                    </md-input-container>
-                </md-grid-tile>
+        <mat-card>
+            <mat-grid-list cols="4" rowHeight="4:1">
+                <mat-grid-tile [colspan]="1">
+                    <mat-form-field class="full-width">
+                        <input matInput autocomplete="off" type='text' placeholder='Filter by Bill No' [(ngModel)]="filterBillNo" />
+                    </mat-form-field>
+                </mat-grid-tile>
 
-                <md-grid-tile *ngIf="title == 'Purchase'" [colspan]="1">
-                    <md-input-container class="full-width">
-                        <input mdInput type='text' placeholder='Filter by supplier' [(ngModel)]="filterSupplier" />
-                    </md-input-container>
-                </md-grid-tile>
+                <mat-grid-tile *ngIf="title == 'Purchase'" [colspan]="1">
+                    <mat-form-field class="full-width">
+                        <input matInput autocomplete="off" type='text' placeholder='Filter by supplier' [(ngModel)]="filterSupplier" />
+                    </mat-form-field>
+                </mat-grid-tile>
 
-                <md-grid-tile *ngIf="title == 'Sales'" [colspan]="1">
-                    <md-input-container class="full-width">
-                        <input mdInput type='text' placeholder='Filter by Customer' [(ngModel)]="filterCustomer" />
-                    </md-input-container>
-                </md-grid-tile>
+                <mat-grid-tile *ngIf="title == 'Sales'" [colspan]="1">
+                    <mat-form-field class="full-width">
+                        <input matInput autocomplete="off" type='text' placeholder='Filter by Customer' [(ngModel)]="filterCustomer" />
+                    </mat-form-field>
+                </mat-grid-tile>
 
-            </md-grid-list>
+            </mat-grid-list>
             <date-filter (fetchRecordEvent)="fetchRecordsByDate($event)" cols="4" rowHeight="4:1" colspan="1"></date-filter>
-        </md-card>
+        </mat-card>
         <hr *ngIf="!tableLoadingIndicator" />
-        <md-progress-bar *ngIf="tableLoadingIndicator" class="buffer-indicator" mode="indeterminate"></md-progress-bar>
+        <mat-progress-bar *ngIf="tableLoadingIndicator" class="buffer-indicator" mode="indeterminate"></mat-progress-bar>
         <ngx-datatable style="height: 350px;" class="material" [rows]="records" [columnMode]="'force'" [scrollbarV]="true" [sortType]="'single'"
             [headerHeight]="30" [footerHeight]="30" [rowHeight]="30" [limit]="10" (page)="onPageChange($event)">
 
@@ -47,24 +47,24 @@
             <ngx-datatable-column prop="Items" name="Items"></ngx-datatable-column>
             <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
                 <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
-                    <a routerLink="." mdTooltip="Delete record" (click)="deleteRecord(row.Id)">
+                    <a routerLink="." matTooltip="Delete record" (click)="deleteRecord(row.Id)">
                         <span class="glyphicon glyphicon-trash"></span>
                     </a>
                 </ng-template>
             </ngx-datatable-column>
             <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
                 <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
-                    <a routerLink="." mdTooltip="View record" (click)="viewRecord(row)">
+                    <a routerLink="." matTooltip="View record" (click)="viewRecord(row)">
                         <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
                 </ng-template>
             </ngx-datatable-column>
             <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
                 <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
-                    <a routerLink="." mdTooltip="Click to edit Record" (click)="editRecord(row.Id)">
+                    <a routerLink="." matTooltip="Click to edit Record" (click)="editRecord(row.Id)">
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
-                    <!-- <button md-icon-button>
+                    <!-- <button mat-icon-button>
                             <span class="glyphicon glyphicon-pencil"></span>
                         </button> -->
                 </ng-template>
@@ -84,14 +84,14 @@
             </ngx-datatable-footer>
         </ngx-datatable>
     </div>
-    <md-sidenav align="end" mode="push" #sidenav class="viewRecord">
+    <mat-sidenav position="end" mode="push" #sidenav class="viewRecord">
         <div style="padding-bottom:5px;">
-            <button style="float:right" md-icon-button color="warn" (click)="sidenav.close()">
+            <button style="float:right" mat-icon-button color="warn" (click)="sidenav.close()">
                 <span class="glyphicon glyphicon-remove"></span>
             </button>
             <h3>View Record</h3>
         </div>
         <peek-record [billId]="view_Id" [billNo]="view_BillNo" [billDate]="view_BillDate" [supplier]="view_Supplier" [customer]="view_Customer"
             [billAmt]="view_BillAmt" (deleteRecordEvent)="deleteRecord($event)" (editRecordEvent)="editRecord($event)" [rows]="peek_recordItems"></peek-record>
-    </md-sidenav>
-</md-sidenav-container>
+    </mat-sidenav>
+</mat-sidenav-container>

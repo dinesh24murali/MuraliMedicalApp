@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { MdDialogRef} from '@angular/material';
+import { MatDialogRef} from '@angular/material';
 
 @Component({
     selector: 'ShowExceptionDialog',
-    template: `<strong md-dialog-title>{{title}}</strong>
-    <div md-dialog-content>{{message}}</div>
-    <div md-dialog-actions>
-      <button md-button md-dialog-close="OK">OK</button>
+    template: `<strong mat-dialog-title>{{title}}</strong>
+    <div mat-dialog-content>{{message}}</div>
+    <div mat-dialog-actions>
+      <button mat-button mat-dialog-close="OK">OK</button>
     </div>`
   })
   export class ExceptionDialog {
@@ -14,7 +14,7 @@ import { MdDialogRef} from '@angular/material';
     public title: string;
     public message: string;
   
-    constructor(public dialogRef: MdDialogRef<ExceptionDialog>) {
+    constructor(public dialogRef: MatDialogRef<ExceptionDialog>) {
   
     }
   }

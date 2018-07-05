@@ -1,106 +1,106 @@
 <div class="main-container">
     <div class="container">
         <h4 align="center" class="title-padding">{{title}}</h4>
-        <md-grid-list cols="7" rowHeight="4:2">
-            <md-grid-tile [colspan]="3">
-                <md-input-container class="full-width">
-                    <input mdInput placeholder="Bill Number" [formControl]="billNo">
-                    <md-error *ngIf="billNo.hasError('required')">
+        <mat-grid-list cols="7" rowHeight="4:2">
+            <mat-grid-tile [colspan]="2">
+                <mat-form-field class="full-width">
+                    <input matInput autocomplete="off" placeholder="Bill Number" [formControl]="billNo">
+                    <mat-error *ngIf="billNo.hasError('required')">
                         Bill number is
                         <strong>required</strong>
-                    </md-error>
-                    <md-error *ngIf="billNo.hasError('maxlength')">
+                    </mat-error>
+                    <mat-error *ngIf="billNo.hasError('maxlength')">
                         Bill number is
                         <strong>too long</strong>
-                    </md-error>
-                </md-input-container>
-            </md-grid-tile>
+                    </mat-error>
+                </mat-form-field>
+            </mat-grid-tile>
 
-            <md-grid-tile [colspan]="1">
-                <md-input-container>
-                    <input mdInput [mdDatepicker]="picker" placeholder="Bill Date" [formControl]="billDate">
-                    <md-error *ngIf="billDate.hasError('required')">
+            <mat-grid-tile [colspan]="2">
+                <mat-form-field>
+                    <input matInput autocomplete="off" [matDatepicker]="picker" placeholder="Bill Date" [formControl]="billDate">
+                    <mat-error *ngIf="billDate.hasError('required')">
                         Bill date is
                         <strong>required</strong>
-                    </md-error>
-                    <button mdSuffix [mdDatepickerToggle]="picker"></button>
-                </md-input-container>
-                <md-datepicker #picker></md-datepicker>
-            </md-grid-tile>
+                    </mat-error>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </mat-grid-tile>
 
-            <md-grid-tile *ngIf="title == 'Purchase'" [colspan]="3">
-                <md-input-container class="full-width">
-                    <input mdInput placeholder="Supplier name" [mdAutocomplete]="auto" [formControl]="supplier">
-                    <md-error *ngIf="supplier.hasError('maxlength')">
+            <mat-grid-tile *ngIf="title == 'Purchase'" [colspan]="3">
+                <mat-form-field class="full-width">
+                    <input matInput autocomplete="off" placeholder="Supplier name" [matAutocomplete]="auto" [formControl]="supplier">
+                    <mat-error *ngIf="supplier.hasError('maxlength')">
                         Supplier name is
                         <strong>too long</strong>
-                    </md-error>
-                    <md-error *ngIf="supplier.hasError('required')">
+                    </mat-error>
+                    <mat-error *ngIf="supplier.hasError('required')">
                         Supplier name is
                         <strong>required</strong>
-                    </md-error>
-                </md-input-container>
+                    </mat-error>
+                </mat-form-field>
 
-                <md-autocomplete #auto="mdAutocomplete">
-                    <md-option *ngFor="let item of filteredSuppliers" [value]="item.name">
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let item of filteredSuppliers" [value]="item.name">
                         {{ item.name }}
-                    </md-option>
-                </md-autocomplete>
+                    </mat-option>
+                </mat-autocomplete>
 
-            </md-grid-tile>
+            </mat-grid-tile>
 
-            <md-grid-tile *ngIf="title == 'Sales'" [colspan]="3">
-                <md-input-container class="full-width">
-                    <input mdInput placeholder="Customer Name" [formControl]="CustomerName">
-                    <md-error *ngIf="CustomerName.hasError('required')">
+            <mat-grid-tile *ngIf="title == 'Sales'" [colspan]="3">
+                <mat-form-field class="full-width">
+                    <input matInput autocomplete="off" placeholder="Customer Name" [formControl]="CustomerName">
+                    <mat-error *ngIf="CustomerName.hasError('required')">
                         Customer Name is
                         <strong>required</strong>
-                    </md-error>
-                    <md-error *ngIf="CustomerName.hasError('maxlength')">
+                    </mat-error>
+                    <mat-error *ngIf="CustomerName.hasError('maxlength')">
                         Customer Name is
                         <strong>too long</strong>
-                    </md-error>
-                </md-input-container>
-            </md-grid-tile>
+                    </mat-error>
+                </mat-form-field>
+            </mat-grid-tile>
 
-            <md-grid-tile [colspan]="3">
-                <md-input-container class="full-width">
-                    <input mdInput placeholder="Item name" [mdAutocomplete]="auto" [formControl]="products">
-                </md-input-container>
+            <mat-grid-tile [colspan]="3">
+                <mat-form-field class="full-width">
+                    <input matInput autocomplete="off" placeholder="Item name" [matAutocomplete]="auto" [formControl]="products">
+                </mat-form-field>
 
-                <md-autocomplete #auto="mdAutocomplete">
-                    <md-option *ngFor="let product of filteredProducts" [value]="product.Pname">
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let product of filteredProducts" [value]="product.Pname">
                         <span>{{ product.Pname }}</span>
-                    </md-option>
-                </md-autocomplete>
-            </md-grid-tile>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-grid-tile>
 
-            <md-grid-tile>
-                <button (click)="addProduct()" md-raised-button title="Adds an item to purchase list">Add to list</button>
-            </md-grid-tile>
-            <md-grid-tile *ngIf="title == 'Purchase'">
-                <button (click)="addNewProduct()" md-raised-button title="Creates a new item">Add New</button>
-            </md-grid-tile>
-            <md-grid-tile>
-                <button (click)="removeProduct()" md-raised-button color="warn">Remove</button>
-            </md-grid-tile>
-            <md-grid-tile>
-                <button (click)="addRecord()" md-raised-button color="primary">{{ this.id ? "Update" : "Submit"}}</button>
-            </md-grid-tile>
-        </md-grid-list>
+            <mat-grid-tile>
+                <button (click)="addProduct()" mat-raised-button title="Adds an item to purchase list">Add to list</button>
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="title == 'Purchase'">
+                <button (click)="addNewProduct()" mat-raised-button title="Creates a new item">Add New</button>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <button (click)="removeProduct()" mat-raised-button color="warn">Remove</button>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <button (click)="addRecord()" mat-raised-button color="primary">{{ this.id ? "Update" : "Submit"}}</button>
+            </mat-grid-tile>
+        </mat-grid-list>
     </div>
     <div style="width:90%;margin-left:5%;">
         <div *ngIf="title == 'Purchase'">
             <ngx-datatable style="height: 380px;" #recordTable [limit]="6" [scrollbarV]="true" class="material" [rows]="selectedItems"
-                [columnMode]="'force'" [headerHeight]="40" [footerHeight]="40" [rowHeight]="45" [selected]="checkedItems" [selectionType]="'checkbox'"
+                [columnMode]="'force'" [headerHeight]="40" [footerHeight]="40" [rowHeight]="50" [selected]="checkedItems" [selectionType]="'checkbox'"
                 (select)='onSelect($event)'>
 
                 <ngx-datatable-column [width]="40" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
                     <ng-template style="width: 35px;" ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
-                        <md-checkbox [checked]="allRowsSelected" (change)="selectFn(allRowsSelected)" [(ngModel)]="selectAllToggle"></md-checkbox>
+                        <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(allRowsSelected)" [(ngModel)]="selectAllToggle"></mat-checkbox>
                     </ng-template>
                     <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
-                        <md-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></md-checkbox>
+                        <mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
                     </ng-template>
                 </ngx-datatable-column>
                 <ngx-datatable-column prop="Pname" name="Name"></ngx-datatable-column>
@@ -117,7 +117,7 @@
                 </ngx-datatable-column>
                 <ngx-datatable-column prop="BatchNo" name="Batch Number" [width]="200">
                     <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
-                        <button color="accent" *ngIf="row.Pid" style="float:right;" md-icon-button mdTooltip="{{row['newBatchFlag'] ? 'Cancel' : 'Add New Batch'}}"
+                        <button color="accent" *ngIf="row.Pid" style="float:right;" mat-icon-button matTooltip="{{row['newBatchFlag'] ? 'Cancel' : 'Add New Batch'}}"
                             (click)="toggleAddNewBatch(row)">
                             <!-- <i class="material-icons">{{row['newBatchFlag'] == false ? "add" : "close"}}</i>
                             glyphicon glyphicon-remove -->
@@ -125,11 +125,13 @@
                         </button>
                         <input style="width:100px;" *ngIf="row['newBatchFlag']" type="text" [(ngModel)]="row['BatchNo']" (keyup)="filterBatch($event,row)"
                             class="form-control">
-                        <md-select (ngModelChange)="fillDetailsPurchase($event,row)" *ngIf="row['newBatchFlag'] == false" [(ngModel)]="row['BatchNo']">
-                            <md-option *ngFor="let item of row['Batches']" [value]="item.BatchNumber">
-                                {{ item.BatchNumber }}
-                            </md-option>
-                        </md-select>
+                        <mat-form-field class="select-width" *ngIf="row['newBatchFlag'] == false">
+                            <mat-select (ngModelChange)="fillDetailsPurchase($event,row)" [(ngModel)]="row['BatchNo']">
+                                <mat-option *ngFor="let item of row['Batches']" [value]="item.BatchNumber">
+                                    {{ item.BatchNumber }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </ng-template>
                 </ngx-datatable-column>
                 <ngx-datatable-column prop="Exp_date" name="Exp Date" [width]="130">
@@ -179,7 +181,6 @@
                             <div class="col-md-3">
                                 <input disabled [(ngModel)]="billAmount" class="form-control">
                             </div>
-
                         </div>
                     </ng-template>
                 </ngx-datatable-footer>
@@ -187,50 +188,52 @@
         </div>
         <div *ngIf="title == 'Sales'">
             <ngx-datatable style="height: 380px;" #recordTable [limit]="6" [scrollbarV]="true" class="material" [rows]="selectedItems"
-                [columnMode]="'force'" [headerHeight]="40" [footerHeight]="40" [rowHeight]="45" [selected]="checkedItems" [selectionType]="'checkbox'"
+                [columnMode]="'force'" [headerHeight]="40" [footerHeight]="40" [rowHeight]="50" [selected]="checkedItems" [selectionType]="'checkbox'"
                 (select)='onSelect($event)'>
 
-                <ngx-datatable-row-detail [rowHeight]="getHeight">
+                <ngx-datatable-row-detail [rowHeight]="150">
                     <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
-                        <table class="table table-condensed" align="center" style="width: 80%;">
-                            <tr>
-                                <th>Batch No</th>
-                                <th>Exp Date</th>
-                                <th>Stock</th>
-                                <th>Qty</th>
-                                <th>Pack</th>
-                                <th>MRP</th>
-                                <th>P rate</th>
-                                <th>Value</th>
-                            </tr>
-                            <tr *ngFor="let item of row['Batches']">
-                                <td *ngIf="item.show">{{item.BatchNumber}}</td>
-                                <td *ngIf="item.show">{{item.Exp_date}}</td>
-                                <td *ngIf="item.show">{{item.stock}}</td>
-                                <td *ngIf="item.show">{{item.batchQty}}</td>
-                                <td *ngIf="item.show">{{item.pack}}</td>
-                                <td *ngIf="item.show">{{item.mrp}}</td>
-                                <td *ngIf="item.show">{{item.P_rate}}</td>
-                                <td *ngIf="item.show">{{item.batchValue | number: '1.1-2'}}</td>
-                            </tr>
-                        </table>
+                        <div style="height: 150px; overflow-y: scroll;">
+                            <table class="table table-condensed" align="center" style="width: 80%;">
+                                <tr>
+                                    <th>Batch No</th>
+                                    <th>Exp Date</th>
+                                    <th>Stock</th>
+                                    <th>Qty</th>
+                                    <th>Pack</th>
+                                    <th>MRP</th>
+                                    <th>P rate</th>
+                                    <th>Value</th>
+                                </tr>
+                                <tr *ngFor="let item of row['Batches']">
+                                    <td *ngIf="item.show">{{item.BatchNumber}}</td>
+                                    <td *ngIf="item.show">{{item.Exp_date}}</td>
+                                    <td *ngIf="item.show">{{item.stock}}</td>
+                                    <td *ngIf="item.show">{{item.batchQty}}</td>
+                                    <td *ngIf="item.show">{{item.pack}}</td>
+                                    <td *ngIf="item.show">{{item.mrp}}</td>
+                                    <td *ngIf="item.show">{{item.P_rate}}</td>
+                                    <td *ngIf="item.show">{{item.batchValue | number: '1.1-2'}}</td>
+                                </tr>
+                            </table>
+                        </div>
                     </ng-template>
                 </ngx-datatable-row-detail>
 
                 <ngx-datatable-column [width]="20" [resizeable]="false" [sortable]="false" [draggable]="false" [canAutoResize]="false">
                     <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
                         <a style="cursor:pointer;" [class.datatable-icon-right]="!expanded" [class.datatable-icon-down]="expanded" title="Expand/Collapse Row"
-                            (click)="toggleExpandRow(row,false)">
+                            (click)="toggleExpandRow(row, expanded)">
                         </a>
                     </ng-template>
                 </ngx-datatable-column>
 
                 <ngx-datatable-column [width]="40" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
                     <ng-template style="width: 35px;" ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
-                        <md-checkbox [checked]="allRowsSelected" (change)="selectFn(allRowsSelected)" [(ngModel)]="selectAllToggle"></md-checkbox>
+                        <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(allRowsSelected)" [(ngModel)]="selectAllToggle"></mat-checkbox>
                     </ng-template>
                     <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
-                        <md-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></md-checkbox>
+                        <mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
                     </ng-template>
                 </ngx-datatable-column>
                 <ngx-datatable-column prop="Pname" name="Name"></ngx-datatable-column>
@@ -244,12 +247,13 @@
                 <ngx-datatable-column prop="BatchNo" name="Batch Number" [width]="250">
 
                     <ng-template let-row="row" ngx-datatable-cell-template let-value="value">
-
-                        <md-select multiple [(ngModel)]="row['BatchNo']" (click)="toggleExpandRow(row,true)" (change)="fillDetailsSales($event,row)">
-                            <md-option *ngFor="let item of row['Batches']" mdTooltip="Expiry Date: {{item.Exp_date}}" [value]="item.BatchNumber">
-                                {{ item.BatchNumber }}
-                            </md-option>
-                        </md-select>
+                        <mat-form-field>
+                            <mat-select multiple [(ngModel)]="row['BatchNo']" (selectionChange)="fillDetailsSales($event,row)">
+                                <mat-option *ngFor="let item of row['Batches']" matTooltip="Expiry Date: {{item.Exp_date}}" [value]="item.BatchNumber">
+                                    {{ item.BatchNumber }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </ng-template>
                 </ngx-datatable-column>
                 <ngx-datatable-column prop="qty" name="Quantity">

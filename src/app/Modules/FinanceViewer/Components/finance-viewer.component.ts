@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MdSnackBar, MdDialogRef, MdDialog, MdDialogConfig, MdSidenav } from '@angular/material';
+import { MatSnackBar, MatDialogRef, MatDialog, MatDialogConfig, MatSidenav } from '@angular/material';
 import { FormControl, Validators } from '@angular/forms';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { DatePipe } from '@angular/common';
@@ -14,33 +14,33 @@ import { PurchaseService } from '../../../Services/purchase.service';
 import { SalesService } from '../../../Services/sales.service';
 import { DateFilter } from "../../Shared/Components/dateFilter.component";
 
-import { GlobalConstants } from "../../../GlobalConstants/GlobalConstants";
+import { GlobalConstants } from "../../../core/GlobalConstants/GlobalConstants";
 @Component({
     selector: 'finance-viewer',
     templateUrl: './../Views/finance-viewer.component.html',
     styles: [`
     .viewRecord{
-      padding: 20px 20px 20px 20px;
+        padding: 20px 20px 20px 20px;
     }
     .view-container{
-      width:1000px;
+        width:1000px;
     }
-    md-sidenav-container {
-      position: fixed;
-      height: 100%;
-      min-height: 100%;
-      width: 100%;
-      min-width: 80%;
-   }
+    .sidenav-container {
+        position: fixed;
+        height: 100%;
+        min-height: 100%;
+        width: 100%;
+        min-width: 80%;
+    }
    .buffer-indicator{
-    margin-top: 18px;
-    margin-bottom: 18px;
-  }
+        margin-top: 18px;
+        margin-bottom: 18px;
+    }
     `]
 })
 export class FinanceViewerComponent implements OnInit, OnDestroy {
 
-    @ViewChild('sidenav') public viewRecordNav: MdSidenav;
+    @ViewChild('sidenav') public viewRecordNav: MatSidenav;
     @ViewChild(DatatableComponent) table: DatatableComponent;
 
     suppliersList: Supplier[] = [];
@@ -90,8 +90,8 @@ export class FinanceViewerComponent implements OnInit, OnDestroy {
     constructor(
         private route: ActivatedRoute,
         private supplierService: SupplierService,
-        public dialog: MdDialog,
-        public snackBar: MdSnackBar,
+        public dialog: MatDialog,
+        public snackBar: MatSnackBar,
         private financialViewerService: FinancialViewerService,
         private purchaseService: PurchaseService,
         private salesService: SalesService,
@@ -331,8 +331,8 @@ export class FinanceViewerComponent implements OnInit, OnDestroy {
         }
     }
     _openExceptionDialog(message: string): void {
-        let config = new MdDialogConfig(),
-            dialogRef: MdDialogRef<ExceptionDialog> = this.dialog.open(ExceptionDialog, config);
+        let config = new MatDialogConfig(),
+            dialogRef: MatDialogRef<ExceptionDialog> = this.dialog.open(ExceptionDialog, config);
         dialogRef.componentInstance.title = "Exception";
         dialogRef.componentInstance.message = message;
     }
