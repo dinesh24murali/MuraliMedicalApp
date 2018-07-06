@@ -1,4 +1,4 @@
-import { ViewChild, ElementRef, Component, OnInit } from '@angular/core';
+import { ViewChild, ElementRef, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import * as fromAppManagement from './core/store/app.reducers';
 import { Store } from '@ngrx/store';
 import * as AppActions from './core/store/app.actions';
@@ -19,14 +19,15 @@ export class AppComponent implements OnInit {
     navBar: Boolean = false;
 
     constructor(
-        private store: Store<fromAppManagement.FeatureState>
+        private store: Store<fromAppManagement.FeatureState>,
+        private ref: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
+        // used to hide the navBat on top
         this.store.select('AppManagement').subscribe(result => {
-            debugger;
-            console.log(result);
             this.hideTopNavBar = result.hide;
+            this.ref.detectChanges();
         });
     }
 

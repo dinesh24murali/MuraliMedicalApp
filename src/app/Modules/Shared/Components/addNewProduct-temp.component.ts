@@ -52,7 +52,7 @@ export class AddNewProductDialog implements OnInit {
       Pid: "",
       Pname: formCtrls.name.value,
       manufacturer: formCtrls.manufacturer.value,
-      type: formCtrls.type,
+      type: formCtrls.type.value,
       tax_percent: formCtrls.tax_percent.value,
       BatchNo: formCtrls.BatchNo.value,
       Batches: [],

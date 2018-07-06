@@ -54,10 +54,8 @@ export class SalesService {
             .then(response => response.json() as PurchaseData[]);
     }
 
-    GetSalesRecord(RecordId: string, forEdit: boolean): Promise<any> {
-
-        return this.http.post(this.host + "/medical/main.php/Sales/GetSalesRecord", 'data={"RecordId":"' + RecordId + '","forEdit":' + forEdit + '}', this.options).toPromise()
-            .then(response => response.json() as any);
+    GetSalesRecord(RecordId: string, forEdit: boolean): Observable<any> {
+        return this.http.post(this.host + "/medical/main.php/Sales/GetSalesRecord", 'data={"RecordId":"' + RecordId + '","forEdit":' + forEdit + '}', this.options);
     }
 
     UpdateSalesRecord(sales: Sales, items: Item[]): Promise<any> {

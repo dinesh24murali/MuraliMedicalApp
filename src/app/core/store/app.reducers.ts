@@ -1,6 +1,5 @@
 import * as AppActions from './app.actions';
 
-
 export interface State {
     hide: Boolean;
 }
@@ -15,7 +14,6 @@ const intialState: State = {
 
 export function AppManagementReducer(state = intialState, action: AppActions.AppActions) {
 
-    debugger;
     switch (action.type) {
         case AppActions.HIDE_NAV_BAR:
             return {

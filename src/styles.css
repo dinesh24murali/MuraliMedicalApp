@@ -23,3 +23,11 @@ input[type=number] {
 .title-padding{
   padding-top: 5px;
 }
+
+.ml-12{
+  margin-left: 12px;
+}
+
+.pt-12{
+  padding-top: 12px;
+}

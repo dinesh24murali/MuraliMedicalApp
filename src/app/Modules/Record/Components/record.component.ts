@@ -93,8 +93,13 @@ export class RecordComponent implements OnInit, OnDestroy {
         this.resetForm();
       else {
         if (this.title == "Purchase") {
-          this.purchaseService.GetPurchaseRecord(this.id, true)
+          this.purchaseService.GetPurchaseRecord(this.id, true).toPromise()
             .then(res => {
+              if (!res._body) {
+                this.snackBar.open('Response error', 'ok', { duration: 3000 });
+                return;
+              }
+              res = JSON.parse(res._body);
               this.billNo.setValue(res.BillNo);
               this.billDate.setValue(res.BillDate);
               this.supplier.setValue(res.Supplier);
@@ -111,8 +116,13 @@ export class RecordComponent implements OnInit, OnDestroy {
                 });
             });
         } else
-          this.salesService.GetSalesRecord(this.id, true)
+          this.salesService.GetSalesRecord(this.id, true).toPromise()
             .then(res => {
+              if (!res._body) {
+                this.snackBar.open('Response error', 'ok', { duration: 3000 });
+                return;
+              }
+              res = JSON.parse(res._body);
               this.billNo.setValue(res.BillNo);
               this.billDate.setValue(res.BillDate);
               this.CustomerName.setValue(res.Customer);

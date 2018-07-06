@@ -23,6 +23,7 @@ import { AddNewProductDialog } from './Modules/Shared/Components/addNewProduct-t
 import { ExceptionDialog } from './Modules/Shared/Components/exception-dialog.component';
 import { DateFilter } from './Modules/Shared/Components/dateFilter.component';
 import { PeekRecord } from './Modules/Shared/Components/peek-record.component';
+import { RecordModule } from './Modules/Record/record.module';
 
 import { ComponentsService } from './Services/components.service';
 import { PurchaseService } from './Services/purchase.service';
@@ -30,6 +31,7 @@ import { SalesService } from './Services/sales.service';
 import { UtilsService } from './Services/utils.service';
 import { SupplierService } from './Services/supplier.service';
 import { FinancialViewerService } from './Services/financial-viewer.service';
+// import { RecordResolver } from './Modules/Record/record-resolver.service';
 
 import { AppManagementReducer } from './core/store/app.reducers';
 
@@ -43,6 +45,7 @@ import { AppManagementReducer } from './core/store/app.reducers';
         ReactiveFormsModule,
         AppRoutingModule,
         NgxDatatableModule,
+        RecordModule,
         StoreModule.forFeature('AppManagement', AppManagementReducer),
         StoreModule.forRoot({})
     ],

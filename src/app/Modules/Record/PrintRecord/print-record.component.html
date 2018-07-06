@@ -1,3 +1,62 @@
 <div class="container">
-    <h4> Print</h4>
+    <h4> {{ title }} order</h4>
+
+    <table class="bill-table" border="2">
+        <thead rowspan="2">
+            <td colspan="4">
+                From: {{ companyName }}
+            </td>
+            <td colspan="5">
+                To: {{ to }}
+            </td>
+        </thead>
+        <tr>
+            <td colspan="4">
+                Date: {{ billDate | date:'mediumDate' }}
+            </td>
+            <td colspan="5">
+                Bill no: {{ billNo }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">Description</td>
+            <td>Batch</td>
+            <td>Exp date</td>
+            <td>Pack</td>
+            <td>Qty</td>
+            <td>Rate</td>
+            <td>Tax</td>
+            <td>Value</td>
+        </tr>
+        <tr *ngFor="let item of items">
+            <td colspan="2"> {{ item.Pname }}</td>
+            <td> {{ item.BatchNo }} </td>
+            <td> {{ '01/'+item.Exp_date | date:'mediumDate' }} </td>
+            <td> {{ item.pack }} </td>
+            <td> {{ item.qty }} </td>
+            <td> {{ item.P_rate }} </td>
+            <td> {{ item.tax_percent }} </td>
+            <td> {{ item['qty'] * (title === 'Sales' ? item['mrp']/item['pack'] : item['P_rate']) | number: '1.1-2'}}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="8">
+                <div *ngFor="let tax of taxTypes" class="col-md-3">
+                    Sales {{ tax }} : {{ taxDetails[tax].sales | number: '1.1-2' }}
+                    <br> Tax {{ tax }} : {{ taxDetails[tax].tax_value | number: '1.1-2' }}
+                </div>
+            </td>
+            <td>
+                Total: {{ billAmt }}
+            </td>
+        </tr>
+    </table>
+    <div class="pt-12 no-print">
+        <div class="col-md-3">
+            <button (click)="onPrint()">Print</button>
+        </div>
+        <div class="col-lg-offset-6 col-md-3">
+            <button (click)="onBack()">Back</button>
+        </div>
+    </div>
 </div>

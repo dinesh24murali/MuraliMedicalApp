@@ -145,8 +145,13 @@ export class ViewRecordComponent implements OnInit, OnDestroy {
         this.view_Id = this.id;
         if (this.id)
           if (this.title == "Purchase")
-            this.purchaseService.GetPurchaseRecord(this.id, false)
+            this.purchaseService.GetPurchaseRecord(this.id, false).toPromise()
               .then(response => {
+                if (!response._body) {
+                  this.snackBar.open('Response error', 'ok', { duration: 3000 });
+                  return;
+                }
+                response = JSON.parse(response._body);
                 this.view_BillNo = response.BillNo;
                 this.view_BillAmt = response.Purchase_amt;
                 this.view_Supplier = response.Supplier;
@@ -155,8 +160,13 @@ export class ViewRecordComponent implements OnInit, OnDestroy {
                 this.viewRecordNav.open();
               });
           else
-            this.salesService.GetSalesRecord(this.id, false)
+            this.salesService.GetSalesRecord(this.id, false).toPromise()
               .then(response => {
+                if (!response._body) {
+                  this.snackBar.open('Response error', 'ok', { duration: 3000 });
+                  return;
+                }
+                response = JSON.parse(response._body);
                 this.view_BillNo = response.BillNo;
                 this.view_BillAmt = response.Sales_amt;
                 this.view_BillDate = response.BillDate;
@@ -343,5 +353,12 @@ export class ViewRecordComponent implements OnInit, OnDestroy {
       dialogRef: MatDialogRef<ExceptionDialog> = this.dialog.open(ExceptionDialog, config);
     dialogRef.componentInstance.title = "Exception";
     dialogRef.componentInstance.message = message;
+  }
+
+  printRecord(recordId: string) {
+    if (this.title == "Purchase")
+      this.router.navigate(['/printRecord/Purchase/' + recordId]);
+    else
+      this.router.navigate(['/printRecord/Sales/' + recordId]);
   }
 }

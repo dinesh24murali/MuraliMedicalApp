@@ -45,28 +45,20 @@
             <ngx-datatable-column *ngIf="title == 'Purchase'" prop="Purchase_amt" name="Purchase Amt"></ngx-datatable-column>
             <ngx-datatable-column *ngIf="title == 'Sales'" prop="Sales_amt" name="Sales Amt"></ngx-datatable-column>
             <ngx-datatable-column prop="Items" name="Items"></ngx-datatable-column>
-            <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+            <ngx-datatable-column [width]="150" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
                 <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
-                    <a routerLink="." matTooltip="Delete record" (click)="deleteRecord(row.Id)">
+                    <a routerLink="." matTooltip="Delete order" (click)="deleteRecord(row.Id)">
                         <span class="glyphicon glyphicon-trash"></span>
                     </a>
-                </ng-template>
-            </ngx-datatable-column>
-            <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
-                <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
-                    <a routerLink="." matTooltip="View record" (click)="viewRecord(row)">
+                    <a class="ml-12" routerLink="." matTooltip="View order" (click)="viewRecord(row)">
                         <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
-                </ng-template>
-            </ngx-datatable-column>
-            <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
-                <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
-                    <a routerLink="." matTooltip="Click to edit Record" (click)="editRecord(row.Id)">
+                    <a class="ml-12" routerLink="." matTooltip="Print order" (click)="printRecord(row.Id)">
+                        <span class="glyphicon glyphicon-print"></span>
+                    </a>
+                    <a class="ml-12" routerLink="." matTooltip="Click to edit order" (click)="editRecord(row.Id)">
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
-                    <!-- <button mat-icon-button>
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </button> -->
                 </ng-template>
             </ngx-datatable-column>
             <ngx-datatable-footer>
@@ -89,7 +81,7 @@
             <button style="float:right" mat-icon-button color="warn" (click)="sidenav.close()">
                 <span class="glyphicon glyphicon-remove"></span>
             </button>
-            <h3>View Record</h3>
+            <h3>View Order</h3>
         </div>
         <peek-record [billId]="view_Id" [billNo]="view_BillNo" [billDate]="view_BillDate" [supplier]="view_Supplier" [customer]="view_Customer"
             [billAmt]="view_BillAmt" (deleteRecordEvent)="deleteRecord($event)" (editRecordEvent)="editRecord($event)" [rows]="peek_recordItems"></peek-record>

@@ -17,19 +17,15 @@ export class PurchaseService {
     AddPurchaseRecord(purchase: Purchase, items: any[]): Promise<any> {
 
         return this.http.post(this.host + "/medical/main.php/Purchase/AddPurchaseRecord", 'data={"RecordDetail":' + encodeURIComponent(JSON.stringify(purchase)) + ',"Items":' + encodeURIComponent(JSON.stringify(items)) + '}', this.options).toPromise()
-            .then((response: any) => {
-                if (response._body)
-                    return JSON.parse(response._body);
-                else
-                    return response;
-            }).catch(function (error) {
+            .then((response: any) => response._body ? JSON.parse(response._body) : response)
+            .catch((error) => {
                 return { Error: true, Message: error.message };
             });
     }
 
     UpdatePurchaseRecord(purchase: Purchase, items: Item[]): Promise<any> {
 
-        return this.http.post(this.host + "/medical/main.php/Purchase/UpdatePurchaseRecord", 'data={"RecordDetail":' + encodeURIComponent(JSON.stringify(purchase)) + ',"Items":' + encodeURIComponent(JSON.stringify(items)) +'}', this.options).toPromise()
+        return this.http.post(this.host + "/medical/main.php/Purchase/UpdatePurchaseRecord", 'data={"RecordDetail":' + encodeURIComponent(JSON.stringify(purchase)) + ',"Items":' + encodeURIComponent(JSON.stringify(items)) + '}', this.options).toPromise()
             .then(response => {
                 return response;
             }).catch(function (error) {
@@ -37,10 +33,8 @@ export class PurchaseService {
             });
     }
 
-    GetPurchaseRecord(RecordId: string, forEdit: boolean): Promise<any> {
-
-        return this.http.post(this.host + "/medical/main.php/Purchase/GetPurchaseRecord", 'data={"RecordId":"' + RecordId + '","forEdit":' + forEdit + '}', this.options).toPromise()
-            .then(response => response.json() as any);
+    GetPurchaseRecord(RecordId: string, forEdit: boolean): Observable<any> {
+        return this.http.post(this.host + "/medical/main.php/Purchase/GetPurchaseRecord", 'data={"RecordId":"' + RecordId + '","forEdit":' + forEdit + '}', this.options);
     }
 
     GetPurchaseRecords(searchCriteria: FilterPurchaseSearchCriteria): Promise<Purchase[]> {

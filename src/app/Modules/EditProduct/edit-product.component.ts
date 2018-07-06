@@ -1,4 +1,3 @@
-import { UtilsService } from './../../Services/utils.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 @Component({
@@ -8,19 +7,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 })
 export class EditProductComponent implements OnInit, OnDestroy {
 
-  constructor(
-    private utilsService: UtilsService
-  ) { }
+  constructor() { }
 
   ngOnInit() {
-    debugger;
-    setTimeout(() => {
-      this.utilsService.hideNavigationBar(true);
-    }, 2000);
   }
 
   ngOnDestroy() {
-    debugger;
-    this.utilsService.hideNavigationBar(false);
   }
 }
