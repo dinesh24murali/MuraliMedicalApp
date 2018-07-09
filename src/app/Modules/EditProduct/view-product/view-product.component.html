@@ -1,1 +1,32 @@
-<h1>Tether</h1>
+<h4 class="pt-5" align="center">Products</h4>
+<form [formGroup]="searchProductForm">
+    <mat-grid-list cols="4" rowHeight="60px">
+        <mat-grid-tile [colspan]="2">
+            <mat-form-field class="full-width">
+                <input matInput autocomplete="off" placeholder="Search products" formControlName="name">
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <mat-checkbox formControlName="expired">Show only expired</mat-checkbox>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <mat-checkbox formControlName="outOfStock">Show only out of stock</mat-checkbox>
+        </mat-grid-tile>
+    </mat-grid-list>
+</form>
+<ngx-datatable class="material" [rows]="products" [columnMode]="'force'" [headerHeight]="30" [footerHeight]="30" [rowHeight]="30"
+    [limit]="10" (page)="onPageChange($event)" [externalPaging]="true" [count]="totalProd">
+
+    <ngx-datatable-column [sortable]="false" prop="Pname" name="Name"></ngx-datatable-column>
+    <ngx-datatable-column [sortable]="false" prop="stock" name="Stock"></ngx-datatable-column>
+    <ngx-datatable-column [sortable]="false" prop="tax" name="Tax"></ngx-datatable-column>
+    <ngx-datatable-column [sortable]="false" prop="manufacturer" name="Manufacturer"></ngx-datatable-column>
+    <ngx-datatable-column [sortable]="false" prop="no_batches" name="Barches"></ngx-datatable-column>
+    <ngx-datatable-column [width]="50" prop="Pid" name="" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+        <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+            <a class="ml-12" routerLink="." matTooltip="Click to edit product" (click)="editProduct(row.Id)">
+                <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+        </ng-template>
+    </ngx-datatable-column>
+</ngx-datatable>

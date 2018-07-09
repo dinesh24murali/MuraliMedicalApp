@@ -1,15 +1,12 @@
-import { Component, ElementRef, ViewChild, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Params, Router, NavigationExtras } from '@angular/router';
-import { MatSnackBar, MatDialogRef, MatDialog, MatDialogConfig, MatSidenav } from '@angular/material';
-import { FormControl, Validators } from '@angular/forms';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar, MatSidenav } from '@angular/material';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
-import { DatePipe } from '@angular/common';
 
-import { DialogTempComponent } from '../../Shared/Components/dialog-temp.component';
-import { ExceptionDialog } from '../../Shared/Components/exception-dialog.component';
-import { Purchase, PurchaseData, Sales, SalesData, FilterPurchaseSearchCriteria, FilterSalesSearchCriteria } from '../../../Models/Record/Record';
+import { PurchaseData, FilterPurchaseSearchCriteria, FilterSalesSearchCriteria } from '../../../Models/Record/Record';
 import { PurchaseService } from '../../../Services/purchase.service';
 import { SalesService } from '../../../Services/sales.service';
+import { UtilsService } from '../../../Services/utils.service';
 import { GlobalConstants } from "../../../core/GlobalConstants/GlobalConstants";
 
 @Component({
@@ -33,7 +30,8 @@ import { GlobalConstants } from "../../../core/GlobalConstants/GlobalConstants";
     margin-top: 18px;
     margin-bottom: 18px;
   }
-  `]
+  `],
+  // encapsulation: ViewEncapsulation.Native
 })
 export class ViewRecordComponent implements OnInit, OnDestroy {
 
@@ -95,9 +93,9 @@ export class ViewRecordComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     public snackBar: MatSnackBar,
-    public dialog: MatDialog,
     private purchaseService: PurchaseService,
-    private salesService: SalesService
+    private salesService: SalesService,
+    private utilsService: UtilsService
   ) { }
 
   ngOnInit(): void {
@@ -218,45 +216,44 @@ export class ViewRecordComponent implements OnInit, OnDestroy {
   }
 
   deleteRecord(recordId: string) {
-    if (this.title == "Purchase")
-      this.purchaseService.DeletePurchaseRecord(recordId)
-        .then(res => {
-          if (res.Error)
-            this._openExceptionDialog(res.Message);
-          else {
-            let record = this.records.find(item => item.Id === recordId);
-            this.records.splice(this.records.indexOf(record), 1);
-            this.records = [...this.records];
-            this.snackBar.open('Record Deleted', 'Ok', {
-              duration: 3000
-            });
-            this.viewRecordNav.close();
-          }
-        });
-    else
-      this.salesService.DeleteSalesRecord(recordId)
-        .then(res => {
-          if (res.Error)
-            this._openExceptionDialog(res.Message);
-          else {
-            let record = this.records.find(item => item.Id === recordId);
-            this.records.splice(this.records.indexOf(record), 1);
-            this.records = [...this.records];
-            this.snackBar.open('Record Deleted', 'Ok', {
-              duration: 3000
-            });
-            this.viewRecordNav.close();
-          }
-        });
-  }
+    this.utilsService.ShowYesNoDialog('Confirm delete', 'Are you sure you want to delete the order?').subscribe(resp => {
+      // return if clicked cancel
+      if (!resp)
+        return;
 
-  openDialog(title: string, message: string): void {
-    let config = new MatDialogConfig(),
-      dialogRef: MatDialogRef<DialogTempComponent> = this.dialog.open(DialogTempComponent, config);
-    dialogRef.componentInstance.title = "Confirm Delete";
-    dialogRef.componentInstance.message = "Are you sure?";
-  }
+      if (this.title == "Purchase")
+        this.purchaseService.DeletePurchaseRecord(recordId)
+          .then(res => {
+            if (res.Error)
+              this._openExceptionDialog(res.Message);
+            else {
+              let record = this.records.find(item => item.Id === recordId);
+              this.records.splice(this.records.indexOf(record), 1);
+              this.records = [...this.records];
+              this.snackBar.open('Record Deleted', 'Ok', {
+                duration: 3000
+              });
+              this.viewRecordNav.close();
+            }
+          });
+      else
+        this.salesService.DeleteSalesRecord(recordId)
+          .then(res => {
+            if (res.Error)
+              this._openExceptionDialog(res.Message);
+            else {
+              let record = this.records.find(item => item.Id === recordId);
+              this.records.splice(this.records.indexOf(record), 1);
+              this.records = [...this.records];
+              this.snackBar.open('Record Deleted', 'Ok', {
+                duration: 3000
+              });
+              this.viewRecordNav.close();
+            }
+          });
+    });
 
+  }
   /** 
   * function handles events from DateFilter component
   * @param {object} dateFilterInfo will have 3 values fromDate, toDate, and clearFilter
@@ -349,10 +346,7 @@ export class ViewRecordComponent implements OnInit, OnDestroy {
   }
 
   _openExceptionDialog(message: string): void {
-    let config = new MatDialogConfig(),
-      dialogRef: MatDialogRef<ExceptionDialog> = this.dialog.open(ExceptionDialog, config);
-    dialogRef.componentInstance.title = "Exception";
-    dialogRef.componentInstance.message = message;
+    this.utilsService.ShowNotificationDialog('Exception', message);
   }
 
   printRecord(recordId: string) {

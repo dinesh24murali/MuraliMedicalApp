@@ -1,0 +1,82 @@
+<h3 mat-dialog-title>Add new item</h3>
+<div mat-dialog-content>
+  <form [formGroup]="newProductForm">
+    <mat-grid-list cols="2" rowHeight="5:1">
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <input matInput autocomplete="off" placeholder="Product Name" formControlName="name">
+          <mat-error *ngIf="newProductForm.controls.name.hasError('required')">
+            Product name is
+            <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <input matInput autocomplete="off" placeholder="Manufacturer" formControlName="manufacturer">
+          <mat-error *ngIf="newProductForm.controls.manufacturer.hasError('required')">
+            Manufacturer is
+            <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <div style="float:left;">
+          <mat-slide-toggle formControlName="type">{{type ? "Generic" : "Non-Generic"}}</mat-slide-toggle>
+        </div>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <input matInput autocomplete="off" type="number" placeholder="Tax percent" formControlName="tax_percent">
+          <mat-error *ngIf="newProductForm.controls.tax_percent.hasError('required')">
+            Tax Percent is
+            <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <input matInput autocomplete="off" placeholder="Batch No" formControlName="BatchNo">
+          <mat-error *ngIf="newProductForm.controls.BatchNo.hasError('required')">
+            Batch number is
+            <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <input matInput autocomplete="off" placeholder="Expiry Date: mm/yyyy" formControlName="Exp_date">
+          <mat-error *ngIf="newProductForm.controls.Exp_date.hasError('required')">
+            Expiry Date is
+            <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="newProductForm.controls.Exp_date.hasError('pattern')">
+            Please enter in mm/yy format
+          </mat-error>
+        </mat-form-field>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <input matInput autocomplete="off" type="number" placeholder="MRP" formControlName="mrp">
+          <mat-error *ngIf="newProductForm.controls.mrp.hasError('required')">
+            MRP is
+            <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <input matInput autocomplete="off" type="number" placeholder="Product rate" formControlName="P_rate">
+          <mat-error *ngIf="newProductForm.controls.P_rate.hasError('required')">
+            Product rate is
+            <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onSaveClick()">OK</button>
+  <button mat-button mat-dialog-close="CANCEL">CANCEL</button>
+</div>

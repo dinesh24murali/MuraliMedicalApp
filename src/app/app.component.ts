@@ -7,10 +7,10 @@ import * as AppActions from './core/store/app.actions';
     selector: 'my-app',
     templateUrl: './Templates/main.html',
     styles: [`
-  .top-correction{
-      top: 50px;
-  }
-  `]
+        .top-correction{
+            top: 50px;
+        }
+    `]
 })
 export class AppComponent implements OnInit {
 

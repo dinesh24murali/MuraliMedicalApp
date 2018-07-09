@@ -18,11 +18,11 @@ import { SampleComponent } from './Modules/Record/Components/sample.component';
 import { FinanceViewerComponent } from './Modules/FinanceViewer/Components/finance-viewer.component';
 import { AppComponent } from './app.component';
 
-import { DialogTempComponent } from './Modules/Shared/Components/dialog-temp.component';
-import { AddNewProductDialog } from './Modules/Shared/Components/addNewProduct-temp.component';
+import { DialogTempComponent } from './Modules/Shared/common-dialogue/dialog-temp.component';
+import { AddNewProductDialog } from './Modules/Shared/add-new-product/addNewProduct-temp.component';
 import { ExceptionDialog } from './Modules/Shared/Components/exception-dialog.component';
 import { DateFilter } from './Modules/Shared/Components/dateFilter.component';
-import { PeekRecord } from './Modules/Shared/Components/peek-record.component';
+import { PeekRecord } from './Modules/Shared/peek-record/peek-record.component';
 import { RecordModule } from './Modules/Record/record.module';
 
 import { ComponentsService } from './Services/components.service';

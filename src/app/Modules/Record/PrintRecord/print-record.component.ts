@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UtilsService } from './../../../Services/utils.service';
-import { RecordService } from './../record.service';
+import { UtilsService } from '../../../Services/utils.service';
+import { RecordService } from '../record.service';
 
 @Component({
   selector: 'print-record',

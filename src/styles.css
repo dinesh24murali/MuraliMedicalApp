@@ -20,7 +20,7 @@ input[type=number] {
 }
 /* */
 
-.title-padding{
+.pt-5{
   padding-top: 5px;
 }
 
@@ -30,4 +30,8 @@ input[type=number] {
 
 .pt-12{
   padding-top: 12px;
+}
+
+.red1 {
+  color: red;
 }

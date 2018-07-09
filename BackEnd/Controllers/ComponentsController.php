@@ -18,6 +18,9 @@ class ComponentsController{
 			case "GetFilteredBatches":
 				$this->GetFilteredBatches($this->postRequest);
 				break;
+			case "SearchProducts":
+				$this->SearchProducts($this->postRequest);
+				break;
 		}		
 	}
 	
@@ -126,6 +129,76 @@ class ComponentsController{
             echo $i <= $no_records-1 ? '},' : '}';
         }
 		echo ']';
+	}
+
+	private function SearchProducts($searchCriteria){
+
+		$query = "SELECT Pname,
+		count(BatchNo) as no_batches,
+		sum(stock) as stock,
+		tax_percent as tax,
+		Manufacturer,
+		Pid,
+		type
+		FROM `prod_stock`";
+		$countQuery = "select count(DISTINCT Pname) as count FROM `prod_stock`"; 
+		$searchFlag = false;
+		if($searchCriteria['searchTest'] != ''){
+			$searchFlag = true;
+			$query .= " WHERE Pname like '".$searchCriteria['searchTest']."%' ";
+			$countQuery .= " WHERE Pname like '".$searchCriteria['searchTest']."%' ";
+		}
+		if ($searchCriteria['is_expired_only'] == 'true') {
+			if($searchFlag) {
+				$query .= " and exp_date <= CURDATE()";
+				$countQuery .= " and exp_date <= CURDATE()";
+			} else {
+				$searchFlag = true;
+				$query .= " where exp_date <= CURDATE()";
+				$countQuery .= " where exp_date <= CURDATE()";
+			}
+		}
+		
+		if ($searchCriteria['is_out_of_stock'] == 'true') {
+			if($searchFlag) {
+				$query .= " and stock <= 0";
+				$countQuery .= " and stock <= 0";
+			} else {
+				$searchFlag = true;
+				$query .= " where stock <= 0";
+				$countQuery .= " where stock <= 0";
+			}
+		}
+		
+		$count = mysqli_fetch_assoc($this->dbHandler->ExecuteQuery($countQuery));
+		$query .= " GROUP by Pname";
+		$startPage = $searchCriteria['page'] * 10;
+		$endPage = $startPage + 10;
+
+		$query .= " limit $startPage,$endPage;";
+
+		// echo "<br><br> Search Query: $countQuery";
+
+		$result = $this->dbHandler->ExecuteQuery($query);
+		echo '{"count": '.$count['count'].',';
+		echo '"product_list":';
+		echo '[';
+		$i=0;
+		$no_records = mysqli_num_rows($result);
+
+		while ($row = mysqli_fetch_assoc($result)) {
+			echo '{';
+			echo '"Pname":"'.$row['Pname'].'",';
+			echo '"tax":"'.$row['tax'].'",';
+			echo '"manufacturer":"'.$row['Manufacturer'].'",';
+			echo '"Pid":"'.$row['Pid'].'",';
+			echo '"type":'.($row['type'] == "1" ? "true" : "false").',';
+			echo '"no_batches":"'.$row['no_batches'].'",';
+			echo '"stock":"'.$row['stock'].'"';
+			$i++;
+            echo $i <= $no_records-1 ? '},' : '}';
+        }
+		echo ']}';
 	}
 }
 

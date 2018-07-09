@@ -1,0 +1,87 @@
+<mat-card>
+    <div class="view-container">
+
+        <mat-grid-list cols="5" rowHeight="5:1">
+            <mat-grid-tile [colspan]="1">
+                <label>Bill Number:</label>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1">
+                <mat-form-field class="full-width">
+                    <input matInput autocomplete="off" disabled [value]="billNo" [title]="billNo">
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1">
+                <label>Bill Date:</label>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1">
+                <mat-form-field class="full-width">
+                    <input matInput autocomplete="off" disabled [value]="billDate" [title]="billDate">
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1">
+                <button (click)="editRecord()" mat-raised-button>
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </button>
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="supplier" [colspan]="1">
+                <label>Supplier</label>
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="supplier" [colspan]="1">
+                <mat-form-field class="full-width">
+                    <input matInput autocomplete="off" disabled [value]="supplier" [title]="supplier">
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="customer" [colspan]="1">
+                <label>Customer</label>
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="customer" [colspan]="1">
+                <mat-form-field class="full-width">
+                    <input matInput autocomplete="off" disabled [value]="customer" [title]="customer">
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1">
+                <label>Bill Amount:</label>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1">
+                <mat-form-field class="full-width">
+                    <input matInput autocomplete="off" disabled [value]="billAmt" [title]="billAmt">
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1">
+                <button (click)="deleteRecord()" mat-raised-button color="z">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </div>
+</mat-card>
+<ngx-datatable style="margin-top:7px;margin-bottom:7px;" class="material" [rows]="rows" [columnMode]="'force'" [headerHeight]="50"
+    [footerHeight]="50" [rowHeight]="50">
+    <ngx-datatable-column prop="Pname" name="Name"></ngx-datatable-column>
+    <ngx-datatable-column prop="manufacturer" name="manufacturer"></ngx-datatable-column>
+    <ngx-datatable-column prop="type" name="Type">
+        <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+            {{value == true ? "Gen" : "Non-gen"}}
+        </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column prop="tax_percent" name="Tax"></ngx-datatable-column>
+    <ngx-datatable-column prop="BatchNo" name="Batch"></ngx-datatable-column>
+    <ngx-datatable-column prop="Exp_date" name="Exp Date"></ngx-datatable-column>
+    <ngx-datatable-column prop="qty" name="Quantity"></ngx-datatable-column>
+    <ngx-datatable-column prop="pack" name="Packing"></ngx-datatable-column>
+    <ngx-datatable-column prop="mrp" name="MRP">
+        <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+            {{ row['mrp'] }}
+        </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column prop="P_rate" name="Rate">
+        <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+            {{ row['P_rate'] }}
+        </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column prop="P_rate" name="Value">
+        <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+            {{ row['qty'] * (customer ? row['mrp']/row['pack'] : row['P_rate']) | number: '1.1-2'}}
+        </ng-template>
+    </ngx-datatable-column>
+</ngx-datatable>

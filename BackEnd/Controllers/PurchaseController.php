@@ -362,7 +362,7 @@ class PurchaseController{
 		$subQuery = $this->GetCountForFilterRecords($data,true);
 		$result = $this->dbHandler->ExecuteQuery("select  sum(pur.qty * stk.P_rate) as total_amount from purchase_data as pur join prod_stock stk on pur.bill_id in($subQuery) and pur.batchNo = stk.BatchNo and pur.Pid = stk.Pid;");
 		$result = mysqli_fetch_assoc($result);
-		echo ' { "total_amount":'.$result['total_amount'].",";
+		echo ' { "total_amount":'.($result['total_amount'] ? $result['total_amount'] : 0).",";
 		$forCount = $this->dbHandler->ExecuteQuery($subQuery);
 		$noOfRecords = mysqli_num_rows($forCount);
 		echo ' "count":'.$noOfRecords.'}';

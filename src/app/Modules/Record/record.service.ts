@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { PurchaseService } from './../../Services/purchase.service';
-import { SalesService } from './../../Services/sales.service';
+import { PurchaseService } from '../../Services/purchase.service';
+import { SalesService } from '../../Services/sales.service';
 
 @Injectable()
 export class RecordService {

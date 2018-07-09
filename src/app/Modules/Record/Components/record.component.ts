@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef, MatDialog, MatDialogConfig, MatSnackBar } from '@angular/material';
 import { FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,8 +12,9 @@ import { ComponentsService } from '../../../Services/components.service';
 import { PurchaseService } from '../../../Services/purchase.service';
 import { SalesService } from '../../../Services/sales.service';
 import { SupplierService } from '../../../Services/supplier.service';
+import { UtilsService } from '../../../Services/utils.service';
 
-import { AddNewProductDialog } from '../../Shared/Components/addNewProduct-temp.component';
+import { AddNewProductDialog } from '../../Shared/add-new-product/addNewProduct-temp.component';
 
 import { PurchaseHelper } from '../HelperClasses/PurchaseHelper';
 import { GlobalConstants } from '../../../core/GlobalConstants/GlobalConstants';
@@ -36,7 +37,10 @@ import { GlobalConstants } from '../../../core/GlobalConstants/GlobalConstants';
     .select-width{
       width: 100px;
     }
-`]
+    .red {
+      color: red;
+    }
+  `]
 })
 export class RecordComponent implements OnInit, OnDestroy {
 
@@ -200,7 +204,8 @@ export class RecordComponent implements OnInit, OnDestroy {
     private componentsService: ComponentsService,
     private purchaseService: PurchaseService,
     private salesService: SalesService,
-    private supplierService: SupplierService
+    private supplierService: SupplierService,
+    private utilsService: UtilsService
   ) {
     this.salesHelper = new SalesHelper(this.salesService);
     this.purchaseOperations = new PurchaseHelper();
@@ -523,10 +528,7 @@ export class RecordComponent implements OnInit, OnDestroy {
   }
 
   _openExceptionDialog(message: string): void {
-    let config = new MatDialogConfig(),
-      dialogRef: MatDialogRef<ExceptionDialog> = this.dialog.open(ExceptionDialog, config);
-    dialogRef.componentInstance.title = "Exception";
-    dialogRef.componentInstance.message = message;
+    this.utilsService.ShowNotificationDialog('Exception', message);
   }
 
   toggleExpandRow(row: any, expanded: any) {
